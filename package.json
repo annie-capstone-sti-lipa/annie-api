@@ -1,0 +1,30 @@
+{
+  "name": "annie-api",
+  "version": "1.0.0",
+  "description": "api for annie",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "ts-node-dev --respawn src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Grrom/annie-api.git"
+  },
+  "keywords": [
+    "anime",
+    "ai",
+    "assistant",
+    "bot"
+  ],
+  "author": "Grrom",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Grrom/annie-api/issues"
+  },
+  "homepage": "https://github.com/Grrom/annie-api#readme",
+  "devDependencies": {
+    "ts-node-dev": "^1.1.8"
+  }
+}
