@@ -11,12 +11,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.post("/sauce", upload.single("image"), async (req, res) => {
+  let response;
   if (req.file === undefined) {
-    res.send(await sauceNaoHelper.fromLink(req.body.image));
+    response = await sauceNaoHelper.fromLink(req.body.image);
   } else {
-    res.send(await sauceNaoHelper.fromImage(req.file!));
+    response = await sauceNaoHelper.fromImage(req.file!);
   }
-  res.send({ response: "hello world" });
+  res.send((response as any).results);
 });
 
 app.listen(process.env.PORT);
