@@ -1,20 +1,39 @@
-export default class SauceNaoHelper {
-  private static apiKey = process.env.SAUCENAO!;
-  private static url = "http://saucenao.com/search.php";
+import FormData from "form-data";
+import fetch from "node-fetch";
 
-  static fromImage = (image: string) => {
+export default class SauceNaoHelper {
+  private apiKey;
+  private url = "https://saucenao.com/search.php";
+
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
+  }
+
+  fromImage = (image: Express.Multer.File) => {
     let formData = new FormData();
+    formData.append("file", Buffer.from(image.buffer), image.originalname);
+    return this.sendRequest(formData);
+  };
+
+  fromLink = (image: String) => {
+    let formData = new FormData();
+    formData.append("url", image);
+    return this.sendRequest(formData);
+  };
+
+  private sendRequest = (formData: FormData): Promise<Object> => {
     formData.append("output_type", "2");
     formData.append("numres", "1");
     formData.append("minsim", "80");
-    formData.append("api_key", SauceNaoHelper.apiKey);
-    formData.append("file", image);
+    formData.append("api_key", this.apiKey);
 
-    fetch(SauceNaoHelper.url, {
+    let response = fetch(this.url, {
       body: formData,
-      method: "post",
+      method: "POST",
     })
       .then((data) => data.json())
-      .then((result) => console.log(result));
+      .catch((e) => console.log(e));
+
+    return response;
   };
 }
