@@ -4,6 +4,7 @@ import SauceNaoHelper from "./saucenao";
 import cors from "cors";
 import "dotenv/config";
 import SuccessResponse from "./types/success-response";
+import AnimeSchedules from "./schedules";
 
 const app = express();
 const upload = multer();
@@ -28,12 +29,16 @@ app.post("/sauce", upload.single("image"), async (req, res) => {
 
 app.post("/login", async (req, res) => {
   setTimeout(() => {
-    // res.send(new SuccessResponse(false, "Failed to login"));
     res.send(new SuccessResponse(true, "Logged in successfully."));
   }, 1000);
 });
 
-app.get("/", (req, res) => {
+app.get("/weekSchedule", async (req, res) => {
+  res.send(await AnimeSchedules.getWeekSchedule());
+});
+
+app.get("/", async (req, res) => {
+  console.log();
   res.send("Hello World!");
 });
 
