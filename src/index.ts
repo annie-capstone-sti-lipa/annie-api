@@ -11,16 +11,15 @@ const upload = multer();
 const sauceNaoHelper = new SauceNaoHelper(process.env.SAUCENAO!);
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(cors());
 app.use(express.json());
 
 app.post("/sauce", upload.single("image"), async (req, res) => {
   let response: any = {};
-  if (req.body.image !== undefined) {
-    response["data"] = await sauceNaoHelper.fromLink(req.body.image);
-  } else if (req.file !== undefined) {
+  if (req.file !== undefined) {
     response["data"] = await sauceNaoHelper.fromImage(req.file!);
+  } else if (req.body.image !== undefined) {
+    response["data"] = await sauceNaoHelper.fromLink(req.body.imageLink);
   } else {
     response = { data: [], error: "Image is required!" };
   }

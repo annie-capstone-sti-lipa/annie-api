@@ -38,9 +38,9 @@ export default class SauceNaoHelper {
       .catch((e) => console.log(e));
 
     let results: Array<Sauce> = [];
+    console.log(response);
 
-    response.results.forEach((result: any) => {
-      console.log(result.data);
+    response?.results?.forEach((result: any) => {
       results.push(new Sauce(result));
     });
 
