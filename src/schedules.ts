@@ -9,10 +9,10 @@ export default class AnimeSchedules {
       let response = await fetch(
         `https://api.jikan.moe/v4/schedules?filter=${day}&sfw=true&page=${
           page ?? 1
-        }`
+        }&kids=false`
       );
       let res = await response.json();
-      if (res.pagination.has_next_page ?? false) {
+      if (res?.pagination?.has_next_page ?? false) {
         res.data.push(((await getScheduleByDay(day, page + 1)) as any)["data"]);
       }
 
@@ -35,7 +35,9 @@ export default class AnimeSchedules {
       await new Promise((resolve) => setTimeout(resolve, 500));
       schedules.push({
         day: days[i],
-        schedules: ((await getScheduleByDay(days[i])) as any)["data"],
+        schedules: (
+          (await getScheduleByDay(days[i]).catch((e) => console.log(e))) as any
+        )["data"],
       });
     }
 
