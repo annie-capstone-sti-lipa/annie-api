@@ -18,10 +18,13 @@ app.post("/sauce", upload.single("image"), async (req, res) => {
   let response: any = {};
   if (req.file !== undefined) {
     response["data"] = await sauceNaoHelper.fromImage(req.file!);
-  } else if (req.body.image !== undefined) {
+  } else if (req.body.imageLink !== undefined) {
     response["data"] = await sauceNaoHelper.fromLink(req.body.imageLink);
   } else {
     response = { data: [], error: "Image is required!" };
+  }
+  if (response["data"].length === 0) {
+    response.error = "There were no matches for this image.";
   }
   res.send(response);
 });
@@ -37,7 +40,6 @@ app.get("/weekSchedule", async (req, res) => {
 });
 
 app.get("/", async (req, res) => {
-  console.log();
   res.send("Hello World!");
 });
 
