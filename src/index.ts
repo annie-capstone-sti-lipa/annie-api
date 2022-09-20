@@ -44,6 +44,7 @@ app.get("/weekSchedule", async (req, res) => {
 });
 
 app.get("/mal-auth", (req, res) => {
+  console.log("hehe");
   res.send({
     authLink: myAnimeListHelper.getAuthLink(),
   });
