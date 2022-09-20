@@ -1,18 +1,22 @@
 import express from "express";
 import multer from "multer";
+import cookieParser from "cookie-parser";
 import SauceNaoHelper from "./saucenao";
 import cors from "cors";
 import "dotenv/config";
 import SuccessResponse from "./types/success-response";
 import AnimeSchedules from "./schedules";
+import MyAnimeListHelper from "./myanimelist";
 
 const app = express();
 const upload = multer();
 const sauceNaoHelper = new SauceNaoHelper(process.env.SAUCENAO!);
+const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.post("/sauce", upload.single("image"), async (req, res) => {
   let response: any = {};
@@ -37,6 +41,12 @@ app.post("/login", async (req, res) => {
 
 app.get("/weekSchedule", async (req, res) => {
   res.send(await AnimeSchedules.getWeekSchedule());
+});
+
+app.get("/mal-auth", (req, res) => {
+  res.send({
+    authLink: myAnimeListHelper.getAuthLink(),
+  });
 });
 
 app.get("/", async (req, res) => {
