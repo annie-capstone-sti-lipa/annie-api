@@ -7,6 +7,7 @@ import "dotenv/config";
 import SuccessResponse from "./types/success-response";
 import AnimeSchedules from "./schedules";
 import MyAnimeListHelper from "./myanimelist";
+import helmet from "helmet";
 
 const app = express();
 const upload = multer();
@@ -21,6 +22,13 @@ app.use(
       "http://127.0.0.1:3000",
       `https://client-annie.me:${process.env.PORT}`,
     ],
+  })
+);
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+    },
   })
 );
 app.use(express.json());
