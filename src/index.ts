@@ -17,9 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
-      "http://localhost:8888",
-      "http://127.0.0.1:8888",
-      "https://client-annie.me",
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      `https://client-annie.me:${process.env.PORT}`,
     ],
   })
 );
