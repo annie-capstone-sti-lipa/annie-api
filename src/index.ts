@@ -14,7 +14,15 @@ const sauceNaoHelper = new SauceNaoHelper(process.env.SAUCENAO!);
 const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:8888",
+      "http://127.0.0.1:8888",
+      "https://client-annie.me",
+    ],
+  })
+);
 app.use(express.json());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
