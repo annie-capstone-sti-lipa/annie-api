@@ -54,5 +54,4 @@ app.get("/", async (req, res) => {
   res.send("Hello World!");
 });
 
-console.log(process.env.PORT);
 app.listen(process.env.PORT);
