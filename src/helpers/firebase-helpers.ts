@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -22,8 +23,68 @@ export default class FireBaseHelper {
     });
   }
 
-  public async saveError(error: any, key: string) {
-    await setDoc(doc(this.firestore, "errors", key), error);
+  public async getKanji() {
+    const fs = require("fs");
+
+    let rawdata = fs.readFileSync("src/helpers/kanji.json");
+
+    let kanji = JSON.parse(rawdata);
+
+    for (let i = 0; i <= Object.keys(kanji).length; i++) {
+      let key = Object.keys(kanji)[i];
+      let theThing = kanji[key];
+
+      let meanings = theThing["meanings"];
+      let onyomi = theThing["readings_on"];
+      let kunyomi = theThing["readings_kun"];
+
+      if (meanings.length > 0 && onyomi.length > 0 && kunyomi.length > 0) {
+        await setDoc(doc(this.firestore, "kanji", key), {
+          character: Object.keys(kanji)[i],
+          meanings: meanings,
+          onyomi_readings: onyomi,
+          kunyomi_readings: kunyomi,
+        });
+        console.log("added :" + key);
+        console.log("index :" + i + " out of " + Object.keys(kanji).length);
+      } else {
+        console.log("SKIPPED");
+      }
+    }
+  }
+
+  public async getHiragana() {
+    const fs = require("fs");
+
+    let rawdata = fs.readFileSync("src/helpers/hiragana.json");
+
+    let hiragana = JSON.parse(rawdata);
+
+    for (let i = 0; i <= Object.keys(hiragana).length; i++) {
+      let key = Object.keys(hiragana)[i];
+      let theThing = hiragana[key];
+
+      await setDoc(doc(this.firestore, "hiragana", key), theThing);
+      console.log("added :" + key);
+      console.log("index :" + i + " out of " + Object.keys(hiragana).length);
+    }
+  }
+
+  public async getKatakana() {
+    const fs = require("fs");
+
+    let rawdata = fs.readFileSync("src/helpers/katakana.json");
+
+    let katakana = JSON.parse(rawdata);
+
+    for (let i = 0; i <= Object.keys(katakana).length; i++) {
+      let key = Object.keys(katakana)[i];
+      let theThing = katakana[key];
+
+      await setDoc(doc(this.firestore, "katakana", key), theThing);
+      console.log("added :" + key);
+      console.log("index :" + i + " out of " + Object.keys(katakana).length);
+    }
   }
 
   public async getWeekSchedule(): Promise<Array<Object>> {

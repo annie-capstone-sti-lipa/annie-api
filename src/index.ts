@@ -70,6 +70,15 @@ app.get("/mal-auth", (req, res) => {
   });
 });
 
+app.get("/quizQuestions", (req, res) => {
+  req.query.writingSystem;
+  req.query.difficulty;
+
+  res.send({
+    authLink: myAnimeListHelper.getAuthLink(),
+  });
+});
+
 app.get("/", async (req, res) => {
   res.send(
     "Hello there!, You shouldn't be here go <a href='https://client-annie.me'>here</a> instead."
