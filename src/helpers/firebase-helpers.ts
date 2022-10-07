@@ -30,7 +30,7 @@ export default class FireBaseHelper {
 
     let kanji = JSON.parse(rawdata);
 
-    for (let i = 0; i <= Object.keys(kanji).length; i++) {
+    for (let i = 0; i < Object.keys(kanji).length; i++) {
       let key = Object.keys(kanji)[i];
       let theThing = kanji[key];
 
@@ -60,13 +60,13 @@ export default class FireBaseHelper {
 
     let hiragana = JSON.parse(rawdata);
 
-    for (let i = 0; i <= Object.keys(hiragana).length; i++) {
-      let key = Object.keys(hiragana)[i];
-      let theThing = hiragana[key];
+    for (let i = 0; i <= hiragana.length; i++) {
+      let theThing = hiragana[i];
+      let key = theThing["kana"];
 
       await setDoc(doc(this.firestore, "hiragana", key), theThing);
       console.log("added :" + key);
-      console.log("index :" + i + " out of " + Object.keys(hiragana).length);
+      console.log("index :" + i + " out of " + hiragana.length);
     }
   }
 
@@ -77,13 +77,13 @@ export default class FireBaseHelper {
 
     let katakana = JSON.parse(rawdata);
 
-    for (let i = 0; i <= Object.keys(katakana).length; i++) {
-      let key = Object.keys(katakana)[i];
-      let theThing = katakana[key];
+    for (let i = 0; i < katakana.length; i++) {
+      let theThing = katakana[i];
+      let key = theThing["kana"];
 
       await setDoc(doc(this.firestore, "katakana", key), theThing);
       console.log("added :" + key);
-      console.log("index :" + i + " out of " + Object.keys(katakana).length);
+      console.log("index :" + i + " out of " + katakana.length);
     }
   }
 

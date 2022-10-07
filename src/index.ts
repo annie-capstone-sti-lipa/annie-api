@@ -10,6 +10,7 @@ import MyAnimeListHelper from "./myanimelist";
 import helmet from "helmet";
 import FireBaseHelper from "./helpers/firebase-helpers";
 import { initializeApp } from "firebase/app";
+import { secureHeapUsed } from "crypto";
 
 const app = express();
 const upload = multer();
