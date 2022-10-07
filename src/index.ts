@@ -11,6 +11,9 @@ import helmet from "helmet";
 import FireBaseHelper from "./helpers/firebase-helpers";
 import { initializeApp } from "firebase/app";
 import { secureHeapUsed } from "crypto";
+import kanaOrdering from "./types/kana-ordering";
+import writingSystem from "./types/writing-system";
+import QuizHelper from "./quiz";
 
 const app = express();
 const upload = multer();
@@ -80,9 +83,18 @@ app.get("/quizQuestions", (req, res) => {
   });
 });
 
+app.get("/kana-quiz", async (req, res) => {
+  res.send(
+    await QuizHelper.getKanaQuiz(
+      req.query.writingSystem as writingSystem,
+      req.query.ordering as kanaOrdering
+    )
+  );
+});
+
 app.get("/", async (req, res) => {
   res.send(
-    "Hello there!, You shouldn't be here go <a href='https://client-annie.me'>here</a> instead."
+    "Hello there!, You shouldn't be here, go <a href='https://client-annie.me'>here</a> instead."
   );
 });
 
