@@ -1,6 +1,6 @@
 import FormData from "form-data";
 import fetch from "node-fetch";
-import Sauce from "./types/sauce";
+import Sauce from "../types/sauce";
 
 export default class SauceNaoHelper {
   private apiKey;

@@ -1,6 +1,6 @@
-import { fireBaseHelper } from ".";
+import { fireBaseHelper } from "..";
 
-export default class AnimeSchedules {
+export default class AnimeSchedulesHelper {
   constructor() {}
 
   static async saveWeekSchedule(): Promise<Array<Object>> {

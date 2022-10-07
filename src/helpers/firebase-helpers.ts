@@ -3,6 +3,7 @@ import {
   doc,
   getDocs,
   getFirestore,
+  limit,
   query,
   setDoc,
   where,
@@ -21,9 +22,11 @@ export default class FireBaseHelper {
     ordering: kanaOrdering
   ): Promise<Array<Kana>> {
     let response: Array<Kana> = [];
+
     const q = query(
       collection(this.firestore, writingSystem),
-      where("type", "==", ordering)
+      where("type", "==", ordering),
+      limit(12)
     );
     const querySnapshot = await getDocs(q);
 
@@ -49,6 +52,7 @@ export default class FireBaseHelper {
     let rawdata = fs.readFileSync("src/helpers/kanji.json");
 
     let kanji = JSON.parse(rawdata);
+    let filteredKanji = [];
 
     for (let i = 0; i < Object.keys(kanji).length; i++) {
       let key = Object.keys(kanji)[i];
@@ -59,7 +63,7 @@ export default class FireBaseHelper {
       let kunyomi = theThing["readings_kun"];
 
       if (meanings.length > 0 && onyomi.length > 0 && kunyomi.length > 0) {
-        await setDoc(doc(this.firestore, "kanji", key), {
+        filteredKanji.push({
           character: Object.keys(kanji)[i],
           meanings: meanings,
           onyomi_readings: onyomi,
@@ -70,7 +74,26 @@ export default class FireBaseHelper {
       } else {
         console.log("SKIPPED");
       }
+
+      // if (meanings.length > 0 && onyomi.length > 0 && kunyomi.length > 0) {
+      //   await setDoc(doc(this.firestore, "kanji", key), {
+      //     character: Object.keys(kanji)[i],
+      //     meanings: meanings,
+      //     onyomi_readings: onyomi,
+      //     kunyomi_readings: kunyomi,
+      //   });
+      //   console.log("added :" + key);
+      //   console.log("index :" + i + " out of " + Object.keys(kanji).length);
+      // } else {
+      //   console.log("SKIPPED");
+      // }
     }
+
+    fs.writeFileSync(
+      "src/jsons/filtered-kanji.json",
+      JSON.stringify(filteredKanji)
+    );
+    console.log("donezo");
   }
 
   public async saveHiragana() {
