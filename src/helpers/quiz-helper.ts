@@ -31,9 +31,21 @@ class QuizHelper {
         ? katakanaList
         : [];
 
-    return kanas.filter((item: kana) => {
+    let kanaList = kanas.filter((item: kana) => {
       return item.type === ordering;
     });
+
+    let questions: Array<KanaQuiz> = [];
+
+    let indexes = [...Array(kanaList.length).keys()];
+    indexes.sort(() => Math.random() - 0.5);
+    indexes.splice(10);
+
+    indexes.forEach((index) => {
+      questions.push(new KanaQuiz(index, kanaList));
+    });
+
+    return questions;
   }
 }
 
