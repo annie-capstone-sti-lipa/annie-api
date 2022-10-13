@@ -17,6 +17,7 @@ import QuizHelper from "./helpers/quiz-helper";
 import hiraganas from "./jsons/hiragana";
 import katakanas from "./jsons/katakana";
 import kanjis from "./jsons/kanji";
+import KanjiReadings from "./types/kanji-readings";
 
 const app = express();
 const upload = multer();
@@ -87,6 +88,14 @@ app.get("/kana-quiz", async (req, res) => {
     QuizHelper.getKanaQuiz(
       (req.query.writing as string).toLowerCase() as writingSystem,
       (req.query.ordering as string).toLowerCase() as kanaOrdering
+    )
+  );
+});
+
+app.get("/kanji-quiz", async (req, res) => {
+  res.send(
+    QuizHelper.getKanjiQuiz(
+      (req.query.reading as string).toLowerCase() as KanjiReadings
     )
   );
 });
