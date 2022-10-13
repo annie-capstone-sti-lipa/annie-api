@@ -14,7 +14,9 @@ import { secureHeapUsed } from "crypto";
 import kanaOrdering from "./types/kana-ordering";
 import writingSystem from "./types/writing-system";
 import QuizHelper from "./helpers/quiz-helper";
-import KanaQuiz from "./types/kana-quiz";
+import hiraganas from "./jsons/hiragana";
+import katakanas from "./jsons/katakana";
+import kanjis from "./jsons/kanji";
 
 const app = express();
 const upload = multer();
@@ -41,15 +43,9 @@ initializeApp({
 
 export const fireBaseHelper = new FireBaseHelper();
 
-const rawHiraganaList = fs.readFileSync("src/jsons/hiragana.json");
-const rawKatakanaList = fs.readFileSync("src/jsons/katakana.json");
-const rawKanjiList = fs.readFileSync("src/jsons/kanji.json");
-
-export const hiraganaList = JSON.parse(rawHiraganaList);
-export const katakanaList = JSON.parse(rawKatakanaList);
-export const kanjiList = JSON.parse(rawKanjiList);
-
-console.log(QuizHelper.getKana(writingSystem.hiragana, kanaOrdering.youon));
+export const hiraganaList = hiraganas;
+export const katakanaList = katakanas;
+export const kanjiList = kanjis;
 
 app.post("/sauce", upload.single("image"), async (req, res) => {
   let response: any = {};
@@ -81,15 +77,6 @@ app.get("/saveWeekSchedule", async (req, res) => {
 });
 
 app.get("/mal-auth", (req, res) => {
-  res.send({
-    authLink: myAnimeListHelper.getAuthLink(),
-  });
-});
-
-app.get("/quizQuestions", (req, res) => {
-  req.query.writingSystem;
-  req.query.difficulty;
-
   res.send({
     authLink: myAnimeListHelper.getAuthLink(),
   });
