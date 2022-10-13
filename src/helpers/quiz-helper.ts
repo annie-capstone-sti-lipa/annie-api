@@ -5,25 +5,25 @@ import KanaQuiz from "../types/kana-quiz";
 import writingSystem from "../types/writing-system";
 
 class QuizHelper {
-  static async getKanaQuiz(
-    writingSystem: writingSystem,
-    ordering: kanaOrdering
-  ): Promise<Array<KanaQuiz>> {
-    let questions: Array<KanaQuiz> = [];
-    let kanaList = await fireBaseHelper.getKana(writingSystem, ordering);
+  // static async getKanaQuiz(
+  //   writingSystem: writingSystem,
+  //   ordering: kanaOrdering
+  // ): Promise<Array<KanaQuiz>> {
+  //   let questions: Array<KanaQuiz> = [];
+  //   let kanaList = await fireBaseHelper.getKana(writingSystem, ordering);
 
-    let indexes = [...Array(kanaList.length).keys()];
-    indexes.sort(() => Math.random() - 0.5);
-    indexes.splice(10);
+  //   let indexes = [...Array(kanaList.length).keys()];
+  //   indexes.sort(() => Math.random() - 0.5);
+  //   indexes.splice(10);
 
-    indexes.forEach((index) => {
-      questions.push(new KanaQuiz(index, kanaList));
-    });
+  //   indexes.forEach((index) => {
+  //     questions.push(new KanaQuiz(index, kanaList));
+  //   });
 
-    return questions;
-  }
+  //   return questions;
+  // }
 
-  public static getKana(writing: writingSystem, ordering: kanaOrdering) {
+  public static getKanaQuiz(writing: writingSystem, ordering: kanaOrdering) {
     let kanas: Array<kana> =
       writing == writingSystem.hiragana
         ? hiraganaList

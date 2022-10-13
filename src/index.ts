@@ -84,9 +84,9 @@ app.get("/mal-auth", (req, res) => {
 
 app.get("/kana-quiz", async (req, res) => {
   res.send(
-    await QuizHelper.getKanaQuiz(
-      req.query.writingSystem as writingSystem,
-      req.query.ordering as kanaOrdering
+    QuizHelper.getKanaQuiz(
+      (req.query.writing as string).toLowerCase() as writingSystem,
+      (req.query.ordering as string).toLowerCase() as kanaOrdering
     )
   );
 });
