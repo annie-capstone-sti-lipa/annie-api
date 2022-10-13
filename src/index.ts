@@ -14,6 +14,7 @@ import { secureHeapUsed } from "crypto";
 import kanaOrdering from "./types/kana-ordering";
 import writingSystem from "./types/writing-system";
 import QuizHelper from "./helpers/quiz-helper";
+import KanaQuiz from "./types/kana-quiz";
 
 const app = express();
 const upload = multer();
@@ -45,8 +46,10 @@ const rawKatakanaList = fs.readFileSync("src/jsons/katakana.json");
 const rawKanjiList = fs.readFileSync("src/jsons/kanji.json");
 
 export const hiraganaList = JSON.parse(rawHiraganaList);
-export const katakanList = JSON.parse(rawKatakanaList);
+export const katakanaList = JSON.parse(rawKatakanaList);
 export const kanjiList = JSON.parse(rawKanjiList);
+
+console.log(QuizHelper.getKana(writingSystem.hiragana, kanaOrdering.youon));
 
 app.post("/sauce", upload.single("image"), async (req, res) => {
   let response: any = {};

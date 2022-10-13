@@ -1,4 +1,5 @@
-import { fireBaseHelper } from "..";
+import { fireBaseHelper, hiraganaList, katakanaList } from "..";
+import kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
 import KanaQuiz from "../types/kana-quiz";
 import writingSystem from "../types/writing-system";
@@ -20,6 +21,19 @@ class QuizHelper {
     });
 
     return questions;
+  }
+
+  public static getKana(writing: writingSystem, ordering: kanaOrdering) {
+    let kanas: Array<kana> =
+      writing == writingSystem.hiragana
+        ? hiraganaList
+        : writing === writingSystem.katakana
+        ? katakanaList
+        : [];
+
+    return kanas.filter((item: kana) => {
+      return item.type === ordering;
+    });
   }
 }
 
