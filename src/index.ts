@@ -106,8 +106,12 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/recommendations", async (req, res) => {
-  res.send(myAnimeListHelper.getSuggestions(Number(req.query.offset) ?? 0));
+  res.send(
+    await myAnimeListHelper.getSuggestions(
+      Number(req.query.offset) ?? 0,
+      Number(req.query.limit)
+    )
+  );
 });
 
-myAnimeListHelper.getSuggestions(0);
 app.listen(process.env.PORT);
