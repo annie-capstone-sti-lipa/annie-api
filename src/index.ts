@@ -10,7 +10,6 @@ import MyAnimeListHelper from "./helpers/myanimelist-helper";
 import helmet from "helmet";
 import FireBaseHelper from "./helpers/firebase-helpers";
 import { initializeApp } from "firebase/app";
-import { secureHeapUsed } from "crypto";
 import kanaOrdering from "./types/kana-ordering";
 import writingSystem from "./types/writing-system";
 import QuizHelper from "./helpers/quiz-helper";
@@ -106,4 +105,9 @@ app.get("/", async (req, res) => {
   );
 });
 
+app.get("/recommendations", async (req, res) => {
+  res.send(myAnimeListHelper.getSuggestions(Number(req.query.offset) ?? 0));
+});
+
+myAnimeListHelper.getSuggestions(0);
 app.listen(process.env.PORT);

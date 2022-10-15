@@ -1,6 +1,7 @@
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
@@ -9,6 +10,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import AnimeItem from "../types/anime-item";
 import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
 import writingSystem from "../types/writing-system";
@@ -46,6 +48,18 @@ export default class FireBaseHelper {
     });
   }
 
+  public async getAnime(id: string): Promise<AnimeItem | null> {
+    let document = await getDoc(
+      doc(collection(this.firestore, "animes"), id.toString())
+    );
+
+    if (document.data !== null) {
+      return document.data() as AnimeItem;
+    } else {
+      return null;
+    }
+  }
+
   public async getWeekSchedule(): Promise<Array<Object>> {
     let schedules: Array<Object> = [];
 
@@ -58,5 +72,12 @@ export default class FireBaseHelper {
     });
 
     return schedules;
+  }
+
+  public async saveAnime(anime: AnimeItem): Promise<void> {
+    await setDoc(
+      doc(this.firestore, "animes", anime.id.toString()),
+      anime.toObject()
+    );
   }
 }

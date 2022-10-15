@@ -60,7 +60,6 @@ class KanjiQuiz {
           this.choices.push(
             kanji.meanings[Helpers.randomNumber(0, kanji.meanings.length - 1)]
           );
-
           break;
       }
     });
