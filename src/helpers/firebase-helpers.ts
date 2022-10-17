@@ -1,4 +1,5 @@
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
@@ -13,6 +14,7 @@ import { getStorage } from "firebase/storage";
 import AnimeItem from "../types/anime-item";
 import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
+import QuizResult from "../types/quiz-result";
 import writingSystem from "../types/writing-system";
 
 export default class FireBaseHelper {
@@ -64,6 +66,18 @@ export default class FireBaseHelper {
     } else {
       return null;
     }
+  }
+
+  public async saveQuizResult(quizResult: QuizResult): Promise<any> {
+    return await addDoc(
+      collection(this.firestore, "users-quiz"),
+      quizResult.toObject()
+    )
+      .then(() => ({
+        success: true,
+        message: "Quiz Result Saved Successfully!",
+      }))
+      .catch((e) => ({ success: false, message: e.toString() }));
   }
 
   public async getWeekSchedule(): Promise<Array<Object>> {

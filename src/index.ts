@@ -9,7 +9,7 @@ import AnimeSchedulesHelper from "./helpers/schedules-helper";
 import MyAnimeListHelper from "./helpers/myanimelist-helper";
 import helmet from "helmet";
 import FireBaseHelper from "./helpers/firebase-helpers";
-import { initializeApp } from "firebase/app";
+import { FirebaseError, initializeApp } from "firebase/app";
 import kanaOrdering from "./types/kana-ordering";
 import writingSystem from "./types/writing-system";
 import QuizHelper from "./helpers/quiz-helper";
@@ -17,6 +17,7 @@ import hiraganas from "./jsons/hiragana";
 import katakanas from "./jsons/katakana";
 import kanjis from "./jsons/kanji";
 import KanjiReadings from "./types/kanji-readings";
+import QuizResult from "./types/quiz-result";
 
 const app = express();
 const upload = multer();
@@ -62,10 +63,20 @@ app.post("/sauce", upload.single("image"), async (req, res) => {
   res.send(response);
 });
 
-app.post("/login", async (req, res) => {
-  setTimeout(() => {
-    res.send(new SuccessResponse(true, "Logged in successfully."));
-  }, 1000);
+app.post("/save-quiz-result", async (req, res) => {
+  fireBaseHelper
+    .saveQuizResult(
+      new QuizResult(
+        req.body.userId,
+        req.body.writingSystem,
+        req.body.type,
+        req.body.items,
+        req.body.score
+      )
+    )
+    .then((result) => {
+      res.send(result);
+    });
 });
 
 app.get("/getWeekSchedule", async (req, res) => {
