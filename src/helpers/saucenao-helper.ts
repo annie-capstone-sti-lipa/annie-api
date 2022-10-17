@@ -1,5 +1,6 @@
 import FormData from "form-data";
 import fetch from "node-fetch";
+import { fireBaseHelper } from "..";
 import Sauce from "../types/sauce";
 
 export default class SauceNaoHelper {
@@ -35,7 +36,7 @@ export default class SauceNaoHelper {
       method: "POST",
     })
       .then((data) => data.json())
-      .catch((e) => console.log(e));
+      .catch((e) => fireBaseHelper.saveError(e.toString(), "saucenao error"));
 
     let results: Array<Sauce> = [];
 

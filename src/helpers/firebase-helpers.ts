@@ -48,13 +48,19 @@ export default class FireBaseHelper {
     });
   }
 
+  public async saveError(error: any, key: string) {
+    await setDoc(doc(this.firestore, "errors", key), { error: error });
+  }
+
   public async getAnime(id: string): Promise<AnimeItem | null> {
     let document = await getDoc(
       doc(collection(this.firestore, "animes"), id.toString())
-    );
+    ).catch((e) => {
+      this.saveError(e, "firebase error");
+    });
 
-    if (document.data !== null) {
-      return document.data() as AnimeItem;
+    if (document?.data !== null) {
+      return document!.data() as AnimeItem;
     } else {
       return null;
     }
