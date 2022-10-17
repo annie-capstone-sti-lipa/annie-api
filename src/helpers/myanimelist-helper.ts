@@ -33,7 +33,6 @@ export default class MyAnimeListHelper {
     limit: number = 30
   ): Promise<Array<AnimeItem>> => {
     let response = await fetch(
-      // `https://api.jikan.moe/v4/top/anime?filter=bypopularity&limit=${limit}`,
       `https://api.myanimelist.net/v2/anime/ranking?ranking_type=bypopularity&limit=${limit}&offset=${offset}`,
 
       {
