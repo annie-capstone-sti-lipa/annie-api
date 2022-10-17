@@ -15,6 +15,7 @@ import AnimeItem from "../types/anime-item";
 import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
 import QuizResult from "../types/quiz-result";
+import QuizScores from "../types/quiz-scores";
 import writingSystem from "../types/writing-system";
 
 export default class FireBaseHelper {
@@ -92,6 +93,53 @@ export default class FireBaseHelper {
     });
 
     return schedules;
+  }
+
+  public async getQuizScores(userId: string) {
+    //: Promise<QuizScores> {
+    const querySnapshot = await getDocs(
+      query(
+        collection(this.firestore, "users-quiz"),
+        where("userId", "==", userId)
+      )
+    );
+
+    let hiraganaScores: Array<any> = [];
+    let katakanaScores: Array<any> = [];
+    let kanjiScores: Array<any> = [];
+
+    querySnapshot.forEach((doc: any) => {
+      let data = doc.data();
+
+      switch (data.writingSystem.toLowerCase()) {
+        case writingSystem.hiragana:
+          hiraganaScores.push(data);
+          break;
+        case writingSystem.katakana:
+          katakanaScores.push(data);
+          break;
+        case writingSystem.kanji:
+          kanjiScores.push(data);
+          break;
+      }
+    });
+
+    function getTotal(data: Array<any>) {
+      let items = 0;
+      let score = 0;
+      data.forEach((element) => {
+        items += element.items;
+        score += element.score;
+      });
+
+      return (score / items) * 100;
+    }
+
+    return new QuizScores(
+      getTotal(kanjiScores),
+      getTotal(hiraganaScores),
+      getTotal(katakanaScores)
+    );
   }
 
   public async saveAnime(anime: AnimeItem): Promise<void> {

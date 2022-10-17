@@ -125,4 +125,10 @@ app.get("/recommendations", async (req, res) => {
   );
 });
 
+app.get("/quiz-scores", async (req, res) => {
+  fireBaseHelper
+    .getQuizScores(req.query.userId!.toString())
+    .then((scores) => res.send(scores));
+});
+
 app.listen(process.env.PORT);
