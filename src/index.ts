@@ -22,7 +22,7 @@ import UserInfo from "./types/user-info";
 const app = express();
 const upload = multer();
 const sauceNaoHelper = new SauceNaoHelper(process.env.SAUCENAO!);
-const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
+export const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -99,7 +99,7 @@ app.get("/mal-auth", (req, res) => {
 });
 
 app.get("/save-auth-code", (req, res) => {
-  fireBaseHelper.saveUserMalAuthCode(req.query);
+  myAnimeListHelper.generateMalToken(req.query);
   res.redirect("https://client-annie.me");
 });
 

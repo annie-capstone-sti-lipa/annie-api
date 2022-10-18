@@ -1,8 +1,10 @@
 import base64url from "base64url";
+import FormData from "form-data";
 import crypto from "crypto";
 import fetch from "node-fetch";
 import { fireBaseHelper } from "..";
 import AnimeItem from "../types/anime-item";
+import { database } from "firebase-admin";
 
 export default class MyAnimeListHelper {
   clientId: string;
@@ -12,6 +14,12 @@ export default class MyAnimeListHelper {
   }
 
   getAuthLink = (userId: string): string => {
+    return `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${
+      this.clientId
+    }&state=${userId}&code_challenge=${this.getCodeVerifier()}`;
+  };
+
+  getCodeVerifier = () => {
     const code_verifier = process.env.CODE_VERIFIER!;
 
     const base64Digest = crypto
@@ -19,9 +27,7 @@ export default class MyAnimeListHelper {
       .update(code_verifier)
       .digest("base64");
 
-    return `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${
-      this.clientId
-    }&state=${userId}&code_challenge=${base64url.fromBase64(base64Digest)}`;
+    return base64url.fromBase64(base64Digest);
   };
 
   getAnimeById = async (id: string): Promise<AnimeItem | null> => {
@@ -82,21 +88,34 @@ export default class MyAnimeListHelper {
     return recommendations;
   };
 
-  //   testingAuth(){
-  //  let url = 'https://myanimelist.net/v1/oauth2/token'
-  //   let data = {
-  //       'client_id': this.clientId,
-  //       'code': authorisation_code,
-  //       'code_verifier': code_verifier,
-  //       'grant_type': 'authorization_code'
-  //   }
+  async generateMalToken(authResponse: any) {
+    let url = "https://myanimelist.net/v1/oauth2/token";
+    let details: any = {
+      client_id: this.clientId,
+      client_secret: this.clientId,
+      grant_type: "authorization_code",
+      code: authResponse.code,
+      code_verifier: this.getCodeVerifier(),
+    };
 
-  //   response = requests.post(url, data)
-  //   response.raise_for_status()  # Check whether the request contains errors
+    var formBody: any = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
 
-  //   token = response.json()
-  //   response.close()
-  //   print('Token generated successfully!')
+    let response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBody,
+    }).then((response) => response.json());
 
-  //   }
+    if (response.error === undefined) {
+      fireBaseHelper.saveUserMalToken(authResponse.state, response);
+    }
+  }
 }

@@ -46,7 +46,7 @@ export default class AnimeSchedulesHelper {
       });
     }
 
-    fireBaseHelper.saveScheduels(schedules);
+    fireBaseHelper.saveSchedules(schedules);
 
     return schedules;
   }

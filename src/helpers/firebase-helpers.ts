@@ -11,6 +11,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { myAnimeListHelper } from "..";
 import AnimeItem from "../types/anime-item";
 import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
@@ -18,32 +19,19 @@ import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
 import UserInfo from "../types/user-info";
 import writingSystem from "../types/writing-system";
+import MyAnimeListHelper from "./myanimelist-helper";
 
 export default class FireBaseHelper {
   firestore = getFirestore();
   storage = getStorage();
 
-  public async getKana(
-    writingSystem: writingSystem,
-    ordering: kanaOrdering
-  ): Promise<Array<Kana>> {
-    let response: Array<Kana> = [];
+  malAuthCollection = "mal-user-auth-code";
+  malTokenCollection = "mal-user-token";
+  userInfoCollection = "users-info";
+  usersQuizCollection = "users-quiz";
+  animesCollections = "animes";
 
-    const q = query(
-      collection(this.firestore, writingSystem),
-      where("type", "==", ordering),
-      limit(12)
-    );
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      response.push(new Kana(doc.data()));
-    });
-
-    return response;
-  }
-
-  public async saveScheduels(schedules: Object[]) {
+  public async saveSchedules(schedules: Object[]) {
     schedules.forEach(async (sched: any) => {
       await setDoc(
         doc(this.firestore, "schedules", sched["day"]),
@@ -58,7 +46,7 @@ export default class FireBaseHelper {
 
   public async getAnime(id: string): Promise<AnimeItem | null> {
     let document = await getDoc(
-      doc(collection(this.firestore, "animes"), id.toString())
+      doc(collection(this.firestore, this.animesCollections), id.toString())
     ).catch((e) => {
       this.saveError(e, "firebase error");
     });
@@ -72,7 +60,7 @@ export default class FireBaseHelper {
 
   public async saveQuizResult(quizResult: QuizResult): Promise<any> {
     return await addDoc(
-      collection(this.firestore, "users-quiz"),
+      collection(this.firestore, this.usersQuizCollection),
       quizResult.toObject()
     )
       .then(() => ({
@@ -84,7 +72,7 @@ export default class FireBaseHelper {
 
   public async saveUserInfo(userInfo: UserInfo, userId: string): Promise<any> {
     return await setDoc(
-      doc(this.firestore, "users-info", userId),
+      doc(this.firestore, this.userInfoCollection, userId),
       userInfo.toObject()
     )
       .then(() => ({
@@ -111,7 +99,7 @@ export default class FireBaseHelper {
   public async getQuizScores(userId: string) {
     const querySnapshot = await getDocs(
       query(
-        collection(this.firestore, "users-quiz"),
+        collection(this.firestore, this.usersQuizCollection),
         where("userId", "==", userId)
       )
     );
@@ -154,15 +142,25 @@ export default class FireBaseHelper {
     );
   }
 
-  public async saveUserMalAuthCode(response: any) {
-    await setDoc(doc(this.firestore, "mal-user-auth-code", response.state), {
-      code: response.code,
+  public async saveUserMalToken(userId: string, response: any) {
+    await setDoc(
+      doc(this.firestore, this.malTokenCollection, userId),
+      response
+    );
+  }
+
+  public async getMalAuthCode(userId: string): Promise<string | null> {
+    let document = await getDoc(
+      doc(collection(this.firestore, this.malAuthCollection), userId)
+    ).catch((e) => {
+      this.saveError(e, "firebase error");
     });
+    return document?.data()?.code ?? null;
   }
 
   public async getUserInfo(userId: string): Promise<UserInfo | null> {
     let document = await getDoc(
-      doc(collection(this.firestore, "users-info"), userId)
+      doc(collection(this.firestore, this.userInfoCollection), userId)
     ).catch((e) => {
       this.saveError(e, "firebase error");
     });
@@ -172,7 +170,7 @@ export default class FireBaseHelper {
 
   public async saveAnime(anime: AnimeItem): Promise<void> {
     await setDoc(
-      doc(this.firestore, "animes", anime.id.toString()),
+      doc(this.firestore, this.animesCollections, anime.id.toString()),
       anime.toObject()
     );
   }
