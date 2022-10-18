@@ -10,7 +10,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getStorage, ref, uploadBytes } from "firebase/storage";
 import AnimeItem from "../types/anime-item";
 import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
