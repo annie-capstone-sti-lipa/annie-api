@@ -16,6 +16,7 @@ import Kana from "../types/kana";
 import kanaOrdering from "../types/kana-ordering";
 import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
+import UserInfo from "../types/user-info";
 import writingSystem from "../types/writing-system";
 
 export default class FireBaseHelper {
@@ -81,6 +82,18 @@ export default class FireBaseHelper {
       .catch((e) => ({ success: false, message: e.toString() }));
   }
 
+  public async saveUserInfo(userInfo: UserInfo, userId: string): Promise<any> {
+    return await setDoc(
+      doc(this.firestore, "users-info", userId),
+      userInfo.toObject()
+    )
+      .then(() => ({
+        success: true,
+        message: "User Info Updated!",
+      }))
+      .catch((e) => ({ success: false, message: e.toString() }));
+  }
+
   public async getWeekSchedule(): Promise<Array<Object>> {
     let schedules: Array<Object> = [];
 
@@ -96,7 +109,6 @@ export default class FireBaseHelper {
   }
 
   public async getQuizScores(userId: string) {
-    //: Promise<QuizScores> {
     const querySnapshot = await getDocs(
       query(
         collection(this.firestore, "users-quiz"),
@@ -140,6 +152,16 @@ export default class FireBaseHelper {
       getTotal(hiraganaScores),
       getTotal(katakanaScores)
     );
+  }
+
+  public async getUserInfo(userId: string): Promise<UserInfo | null> {
+    let document = await getDoc(
+      doc(collection(this.firestore, "users-info"), userId)
+    ).catch((e) => {
+      this.saveError(e, "firebase error");
+    });
+
+    return (document?.data() as UserInfo) ?? null;
   }
 
   public async saveAnime(anime: AnimeItem): Promise<void> {

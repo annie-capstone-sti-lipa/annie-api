@@ -17,6 +17,7 @@ import katakanas from "./jsons/katakana";
 import kanjis from "./jsons/kanji";
 import KanjiReadings from "./types/kanji-readings";
 import QuizResult from "./types/quiz-result";
+import UserInfo from "./types/user-info";
 
 const app = express();
 const upload = multer();
@@ -67,6 +68,20 @@ app.post("/save-quiz-result", async (req, res) => {
     .then((result) => {
       res.send(result);
     });
+});
+
+app.post("/save-user-info", async (req, res) => {
+  fireBaseHelper
+    .saveUserInfo(new UserInfo(req.body.name, req.body.bio), req.body.userId)
+    .then((result) => {
+      res.send(result);
+    });
+});
+
+app.get("/user-info", async (req, res) => {
+  fireBaseHelper.getUserInfo(req.query.userId!.toString()).then((result) => {
+    res.send({ userInfo: result });
+  });
 });
 
 app.get("/getWeekSchedule", async (req, res) => {
