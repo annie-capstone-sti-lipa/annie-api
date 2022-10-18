@@ -11,7 +11,7 @@ export default class MyAnimeListHelper {
     this.clientId = clientId;
   }
 
-  getAuthLink = (): string => {
+  getAuthLink = (userId: string): string => {
     const code_verifier = process.env.CODE_VERIFIER!;
 
     const base64Digest = crypto
@@ -21,7 +21,7 @@ export default class MyAnimeListHelper {
 
     return `https://myanimelist.net/v1/oauth2/authorize?response_type=code&client_id=${
       this.clientId
-    }&code_challenge=${base64url.fromBase64(base64Digest)}`;
+    }&state=${userId}&code_challenge=${base64url.fromBase64(base64Digest)}`;
   };
 
   getAnimeById = async (id: string): Promise<AnimeItem | null> => {
@@ -81,4 +81,22 @@ export default class MyAnimeListHelper {
     fireBaseHelper.saveError(recommendations, "recommendations");
     return recommendations;
   };
+
+  //   testingAuth(){
+  //  let url = 'https://myanimelist.net/v1/oauth2/token'
+  //   let data = {
+  //       'client_id': this.clientId,
+  //       'code': authorisation_code,
+  //       'code_verifier': code_verifier,
+  //       'grant_type': 'authorization_code'
+  //   }
+
+  //   response = requests.post(url, data)
+  //   response.raise_for_status()  # Check whether the request contains errors
+
+  //   token = response.json()
+  //   response.close()
+  //   print('Token generated successfully!')
+
+  //   }
 }

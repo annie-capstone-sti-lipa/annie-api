@@ -94,8 +94,13 @@ app.get("/saveWeekSchedule", async (req, res) => {
 
 app.get("/mal-auth", (req, res) => {
   res.send({
-    authLink: myAnimeListHelper.getAuthLink(),
+    authLink: myAnimeListHelper.getAuthLink(req.query.userId as string),
   });
+});
+
+app.get("/save-auth-code", (req, res) => {
+  fireBaseHelper.saveUserMalAuthCode(req.query);
+  res.redirect("https://client-annie.me");
 });
 
 app.get("/kana-quiz", async (req, res) => {
@@ -115,7 +120,7 @@ app.get("/kanji-quiz", async (req, res) => {
   );
 });
 
-app.get("/", async (req, res) => {
+app.get("/", async (_, res) => {
   res.send(
     "Hello there!, You shouldn't be here, go <a href='https://client-annie.me'>here</a> instead."
   );

@@ -154,6 +154,12 @@ export default class FireBaseHelper {
     );
   }
 
+  public async saveUserMalAuthCode(response: any) {
+    await setDoc(doc(this.firestore, "mal-user-auth-code", response.state), {
+      code: response.code,
+    });
+  }
+
   public async getUserInfo(userId: string): Promise<UserInfo | null> {
     let document = await getDoc(
       doc(collection(this.firestore, "users-info"), userId)
