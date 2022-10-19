@@ -149,13 +149,13 @@ export default class FireBaseHelper {
     );
   }
 
-  public async getMalAuthCode(userId: string): Promise<string | null> {
+  public async getMalToken(userId: string): Promise<any> {
     let document = await getDoc(
-      doc(collection(this.firestore, this.malAuthCollection), userId)
+      doc(collection(this.firestore, this.malTokenCollection), userId)
     ).catch((e) => {
       this.saveError(e, "firebase error");
     });
-    return document?.data()?.code ?? null;
+    return document?.data();
   }
 
   public async getUserInfo(userId: string): Promise<UserInfo | null> {

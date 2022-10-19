@@ -1,10 +1,11 @@
 import base64url from "base64url";
 import FormData from "form-data";
 import crypto from "crypto";
-import fetch from "node-fetch";
+import fetch, { Body } from "node-fetch";
 import { fireBaseHelper } from "..";
 import AnimeItem from "../types/anime-item";
 import { database } from "firebase-admin";
+import AnimeStatus from "../types/anime-status";
 
 export default class MyAnimeListHelper {
   clientId: string;
@@ -90,14 +91,28 @@ export default class MyAnimeListHelper {
 
   async generateMalToken(authResponse: any) {
     let url = "https://myanimelist.net/v1/oauth2/token";
-    let details: any = {
-      client_id: this.clientId,
-      client_secret: this.clientId,
-      grant_type: "authorization_code",
-      code: authResponse.code,
-      code_verifier: this.getCodeVerifier(),
-    };
 
+    let response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: this.getFormUrlEncoded({
+        client_id: this.clientId,
+        client_secret: this.clientId,
+        grant_type: "authorization_code",
+        code: authResponse.code,
+        code_verifier: this.getCodeVerifier(),
+      }),
+    }).then((response) => response.json());
+
+    if (response.error === undefined) {
+      console.log(response);
+      fireBaseHelper.saveUserMalToken(authResponse.state, response);
+    }
+  }
+
+  private getFormUrlEncoded(details: any) {
     var formBody: any = [];
     for (var property in details) {
       var encodedKey = encodeURIComponent(property);
@@ -105,17 +120,54 @@ export default class MyAnimeListHelper {
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
+    return formBody;
+  }
 
-    let response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formBody,
-    }).then((response) => response.json());
+  async completedAnimeStatus(
+    animeId: string,
+    status: AnimeStatus,
+    score: number,
+    num_watched_episodes: number,
+    userId: string
+  ) {
+    return fireBaseHelper.getMalToken(userId).then(async (malToken: any) => {
+      const response = await fetch(
+        `https://api.myanimelist.net/v2/anime/${animeId}/my_list_status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `${malToken.token_type} ${malToken.access_token}`,
+          },
+          body: this.getFormUrlEncoded({
+            status: status,
+            score: score,
+            num_watched_episodes: num_watched_episodes,
+          }),
+        }
+      );
+      return await await response.json();
+    });
+  }
 
-    if (response.error === undefined) {
-      fireBaseHelper.saveUserMalToken(authResponse.state, response);
-    }
+  async updateAnimeStatus(
+    animeId: string,
+    status: AnimeStatus,
+    userId: string
+  ) {
+    return fireBaseHelper.getMalToken(userId).then(async (malToken: any) => {
+      const response = await fetch(
+        `https://api.myanimelist.net/v2/anime/${animeId}/my_list_status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `${malToken.token_type} ${malToken.access_token}`,
+          },
+          body: this.getFormUrlEncoded({ status: status }),
+        }
+      );
+      return await response.json();
+    });
   }
 }

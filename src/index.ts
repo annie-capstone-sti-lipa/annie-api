@@ -18,6 +18,7 @@ import kanjis from "./jsons/kanji";
 import KanjiReadings from "./types/kanji-readings";
 import QuizResult from "./types/quiz-result";
 import UserInfo from "./types/user-info";
+import AnimeStatus from "./types/anime-status";
 
 const app = express();
 const upload = multer();
@@ -68,6 +69,31 @@ app.post("/save-quiz-result", async (req, res) => {
     .then((result) => {
       res.send(result);
     });
+});
+
+app.post("/update-anime-status", async (req, res) => {
+  console.log("update");
+  let body = req.body;
+  if (req.body.status === AnimeStatus.completed) {
+    res.send(
+      await myAnimeListHelper.completedAnimeStatus(
+        body.animeId,
+        body.status,
+        body.score,
+        body.num_watched_episodes,
+        body.userId
+      )
+    );
+  } else {
+    let eto = await myAnimeListHelper.updateAnimeStatus(
+      body.animeId,
+      body.status,
+      body.userId
+    );
+    console.log("res");
+    console.log(eto);
+    res.send(eto);
+  }
 });
 
 app.post("/save-user-info", async (req, res) => {

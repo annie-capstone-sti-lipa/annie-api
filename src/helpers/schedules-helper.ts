@@ -11,7 +11,7 @@ export default class AnimeSchedulesHelper {
       let response = await fetch(
         `https://api.jikan.moe/v4/schedules?filter=${day}&sfw=false&page=${
           page ?? 1
-        }&kids=false`,
+        }&kids=true`,
         { method: "GET" }
       ).catch((e) => {
         throw e;
