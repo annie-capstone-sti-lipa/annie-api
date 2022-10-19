@@ -72,7 +72,6 @@ app.post("/save-quiz-result", async (req, res) => {
 });
 
 app.post("/update-anime-status", async (req, res) => {
-  console.log("update");
   let body = req.body;
   if (req.body.status === AnimeStatus.completed) {
     res.send(
@@ -85,14 +84,13 @@ app.post("/update-anime-status", async (req, res) => {
       )
     );
   } else {
-    let eto = await myAnimeListHelper.updateAnimeStatus(
-      body.animeId,
-      body.status,
-      body.userId
+    res.send(
+      await myAnimeListHelper.updateAnimeStatus(
+        body.animeId,
+        body.status,
+        body.userId
+      )
     );
-    console.log("res");
-    console.log(eto);
-    res.send(eto);
   }
 });
 

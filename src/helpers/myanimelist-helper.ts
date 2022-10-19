@@ -127,7 +127,7 @@ export default class MyAnimeListHelper {
     animeId: string,
     status: AnimeStatus,
     score: number,
-    num_watched_episodes: number,
+    num_watched_episodes: number = 99999,
     userId: string
   ) {
     return fireBaseHelper.getMalToken(userId).then(async (malToken: any) => {
@@ -139,11 +139,17 @@ export default class MyAnimeListHelper {
             "Content-Type": "application/x-www-form-urlencoded",
             Authorization: `${malToken.token_type} ${malToken.access_token}`,
           },
-          body: this.getFormUrlEncoded({
-            status: status,
-            score: score,
-            num_watched_episodes: num_watched_episodes,
-          }),
+          body:
+            score === undefined
+              ? this.getFormUrlEncoded({
+                  status: status,
+                  num_watched_episodes: num_watched_episodes,
+                })
+              : this.getFormUrlEncoded({
+                  status: status,
+                  score: score,
+                  num_watched_episodes: num_watched_episodes,
+                }),
         }
       );
       return await await response.json();
