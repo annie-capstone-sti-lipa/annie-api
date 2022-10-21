@@ -36,15 +36,22 @@ export default class MyAnimeListHelper {
   };
 
   getSuggestions = async (
+    userId: string,
     offset: number,
     limit: number = 30
   ): Promise<Array<AnimeItem>> => {
+    let malToken = await fireBaseHelper.getMalToken(userId);
     let response = await fetch(
-      `https://api.myanimelist.net/v2/anime/ranking?ranking_type=bypopularity&limit=${limit}&offset=${offset}`,
+      malToken === undefined
+        ? `https://api.myanimelist.net/v2/anime/ranking?ranking_type=bypopularity&limit=${limit}&offset=${offset}`
+        : `https://api.myanimelist.net/v2/anime/suggestions?limit=${limit}&offset=${offset}`,
 
       {
         method: "GET",
-        headers: { "X-MAL-CLIENT-ID": this.clientId },
+        headers: {
+          "X-MAL-CLIENT-ID": this.clientId,
+          Authorization: `${malToken.token_type} ${malToken.access_token}`,
+        },
       }
     )
       .then(async (data) => await data.json())
@@ -52,27 +59,22 @@ export default class MyAnimeListHelper {
 
     let recommendations: Array<AnimeItem> = [];
 
+    console.log(response);
+
     if (response.data !== undefined) {
       for (let i = 0; i < response.data.length; i++) {
         let anime = response.data[i];
 
         recommendations.push(
           await new Promise((resolve) => {
-            fireBaseHelper.saveError("got error", "before firebase request");
             this.getAnimeById(anime.node.id).then(async (animeFromFirebase) => {
-              fireBaseHelper.saveError("got error", "after firebase request");
               if (animeFromFirebase) {
                 resolve(animeFromFirebase);
               } else {
                 await new Promise((resolve) => setTimeout(resolve, 500));
-                fireBaseHelper.saveError("got error", "before jikan request");
                 await fetch(`https://api.jikan.moe/v4/anime/${anime.node.id}`)
                   .then((response) => response.json())
                   .then((data) => {
-                    fireBaseHelper.saveError(
-                      "got error",
-                      "after jikan request"
-                    );
                     let theAnime = new AnimeItem(data.data);
                     fireBaseHelper.saveAnime(theAnime);
                     resolve(theAnime);
@@ -85,7 +87,6 @@ export default class MyAnimeListHelper {
       }
     }
 
-    fireBaseHelper.saveError(recommendations, "recommendations");
     return recommendations;
   };
 

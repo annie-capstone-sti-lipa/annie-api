@@ -153,6 +153,7 @@ app.get("/", async (_, res) => {
 app.get("/recommendations", async (req, res) => {
   res.send(
     await myAnimeListHelper.getSuggestions(
+      req.query.userId as string,
       Number(req.query.offset ?? "0") ?? 0,
       Number(req.query.limit ?? "0")
     )
