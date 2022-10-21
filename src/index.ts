@@ -73,24 +73,32 @@ app.post("/save-quiz-result", async (req, res) => {
 
 app.post("/update-anime-status", async (req, res) => {
   let body = req.body;
-  if (req.body.status === AnimeStatus.completed) {
-    res.send(
-      await myAnimeListHelper.completedAnimeStatus(
-        body.animeId,
-        body.status,
-        body.score,
-        body.num_watched_episodes,
-        body.userId
-      )
-    );
+  if ((await fireBaseHelper.getMalToken(body.userId)) === undefined) {
+    res.send({
+      error:
+        "You need to grant permissions to your MyAnimeList account to perform such actions.",
+      link: myAnimeListHelper.getAuthLink(body.userId),
+    });
   } else {
-    res.send(
-      await myAnimeListHelper.updateAnimeStatus(
-        body.animeId,
-        body.status,
-        body.userId
-      )
-    );
+    if (req.body.status === AnimeStatus.completed) {
+      res.send(
+        await myAnimeListHelper.completedAnimeStatus(
+          body.animeId,
+          body.status,
+          body.score,
+          body.num_watched_episodes,
+          body.userId
+        )
+      );
+    } else {
+      res.send(
+        await myAnimeListHelper.updateAnimeStatus(
+          body.animeId,
+          body.status,
+          body.userId
+        )
+      );
+    }
   }
 });
 

@@ -50,7 +50,7 @@ export default class MyAnimeListHelper {
         method: "GET",
         headers: {
           "X-MAL-CLIENT-ID": this.clientId,
-          Authorization: `${malToken.token_type} ${malToken.access_token}`,
+          Authorization: `${malToken?.token_type} ${malToken?.access_token}`,
         },
       }
     )
@@ -58,8 +58,6 @@ export default class MyAnimeListHelper {
       .catch((e) => fireBaseHelper.saveError(e.toString(), "mal error"));
 
     let recommendations: Array<AnimeItem> = [];
-
-    console.log(response);
 
     if (response.data !== undefined) {
       for (let i = 0; i < response.data.length; i++) {
@@ -108,7 +106,6 @@ export default class MyAnimeListHelper {
     }).then((response) => response.json());
 
     if (response.error === undefined) {
-      console.log(response);
       fireBaseHelper.saveUserMalToken(authResponse.state, response);
     }
   }

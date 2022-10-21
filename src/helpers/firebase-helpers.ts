@@ -169,7 +169,6 @@ export default class FireBaseHelper {
   }
 
   public async saveAnime(anime: AnimeItem): Promise<void> {
-    console.log(anime);
     await setDoc(
       doc(this.firestore, this.animesCollections, anime.id.toString()),
       anime.toObject()
