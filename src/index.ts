@@ -1,6 +1,5 @@
 import express from "express";
 import multer from "multer";
-import cookieParser from "cookie-parser";
 import SauceNaoHelper from "./helpers/saucenao-helper";
 import cors from "cors";
 import "dotenv/config";
@@ -19,22 +18,22 @@ import KanjiReadings from "./types/kanji-readings";
 import QuizResult from "./types/quiz-result";
 import UserInfo from "./types/user-info";
 import AnimeStatus from "./types/anime-status";
+import DiscordHelper from "./helpers/discord-helper";
 
 const app = express();
 const upload = multer();
 const sauceNaoHelper = new SauceNaoHelper(process.env.SAUCENAO!);
-export const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-app.use(cookieParser(process.env.COOKIE_SECRET));
-
 initializeApp(require("../config.json"));
 
+export const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 export const fireBaseHelper = new FireBaseHelper();
+export const discordHelper = new DiscordHelper(process.env.DISCORD_TOKEN!);
 
 export const hiraganaList = hiraganas;
 export const katakanaList = katakanas;
@@ -153,9 +152,7 @@ app.get("/kanji-quiz", async (req, res) => {
 });
 
 app.get("/", async (_, res) => {
-  res.send(
-    "Hello there!, You shouldn't be here, go <a href='https://client-annie.me'>here</a> instead."
-  );
+  res.redirect("https://client-annie.me");
 });
 
 app.get("/recommendations", async (req, res) => {
