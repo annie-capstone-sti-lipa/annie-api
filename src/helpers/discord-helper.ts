@@ -1,5 +1,4 @@
 import { Client, GatewayIntentBits, Partials, DMChannel } from "discord.js";
-import { measureMemory } from "vm";
 
 class DiscordHelper {
   client = new Client({
