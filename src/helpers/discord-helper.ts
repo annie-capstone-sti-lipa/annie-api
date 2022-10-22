@@ -17,14 +17,17 @@ class DiscordHelper {
     });
 
     this.client.on("messageCreate", (message) => {
-      let isDM = message.channel instanceof DMChannel;
+      console.log(message.content);
+      if (this.client.user?.id !== message.author.id) {
+        let isDM = message.channel instanceof DMChannel;
 
-      if (isDM) {
-        console.log("is dm");
-        message.author.send("heloo");
-      } else {
-        console.log("is not dm");
-        message.channel.send("heloo from channel");
+        if (isDM) {
+          console.log("is dm");
+          message.author.send("heloo");
+        } else {
+          console.log("is not dm");
+          message.channel.send("heloo from channel");
+        }
       }
     });
 
