@@ -1,10 +1,8 @@
 import base64url from "base64url";
-import FormData from "form-data";
 import crypto from "crypto";
 import fetch, { Body } from "node-fetch";
 import { fireBaseHelper } from "..";
 import AnimeItem from "../types/anime-item";
-import { database } from "firebase-admin";
 import AnimeStatus from "../types/anime-status";
 
 export default class MyAnimeListHelper {
@@ -54,12 +52,16 @@ export default class MyAnimeListHelper {
         },
       }
     )
-      .then(async (data) => await data.json())
-      .catch((e) => fireBaseHelper.saveError(e.toString(), "mal error"));
+      .then(async (data) => {
+        return await data.json();
+      })
+      .catch((e) => {
+        fireBaseHelper.saveError(e.toString(), "mal error");
+      });
 
     let recommendations: Array<AnimeItem> = [];
 
-    if (response.data !== undefined) {
+    if (response !== undefined) {
       for (let i = 0; i < response.data.length; i++) {
         let anime = response.data[i];
 

@@ -18,7 +18,6 @@ import KanjiReadings from "./types/kanji-readings";
 import QuizResult from "./types/quiz-result";
 import UserInfo from "./types/user-info";
 import AnimeStatus from "./types/anime-status";
-import DiscordHelper from "./helpers/discord-helper";
 
 const app = express();
 const upload = multer();
@@ -33,7 +32,6 @@ initializeApp(require("../config.json"));
 
 export const myAnimeListHelper = new MyAnimeListHelper(process.env.CLIENT_ID!);
 export const fireBaseHelper = new FireBaseHelper();
-export const discordHelper = new DiscordHelper(process.env.DISCORD_TOKEN!);
 
 export const hiraganaList = hiraganas;
 export const katakanaList = katakanas;
@@ -121,6 +119,13 @@ app.get("/getWeekSchedule", async (req, res) => {
 
 app.get("/saveWeekSchedule", async (req, res) => {
   res.send(await AnimeSchedulesHelper.saveWeekSchedule());
+});
+
+app.get("/discord-auth", (req, res) => {
+  res.send({
+    message: `Register by sending ".register ${req.body.userId}" to Annie in her DMs`,
+    link: "https://discord.com/users/955202644702556260",
+  });
 });
 
 app.get("/mal-auth", (req, res) => {
