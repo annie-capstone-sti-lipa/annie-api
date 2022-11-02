@@ -123,7 +123,7 @@ app.get("/saveWeekSchedule", async (req, res) => {
 
 app.get("/discord-auth", (req, res) => {
   res.send({
-    message: `Register by sending ".register ${req.body.userId}" to Annie in her DMs`,
+    message: `.register ${req.query.userId}`,
     link: "https://discord.com/users/955202644702556260",
   });
 });
