@@ -61,6 +61,10 @@ export default class MyAnimeListHelper {
 
     let recommendations: Array<AnimeItem> = [];
 
+    if (response == undefined) {
+      return this.getSuggestions("", offset, limit);
+    }
+
     if (response !== undefined) {
       for (let i = 0; i < response.data.length; i++) {
         let anime = response.data[i];

@@ -38,6 +38,7 @@ export default class AnimeSchedulesHelper {
 
     for (let i = 0; i < days.length; i++) {
       await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(days[i]);
       schedules.push({
         day: days[i],
         schedules: (
