@@ -30,6 +30,7 @@ export default class FireBaseHelper {
   userInfoCollection = "users-info";
   usersQuizCollection = "users-quiz";
   animesCollections = "animes";
+  userDiscordIdCollection = "users-discord";
 
   public async saveSchedules(schedules: Object[]) {
     schedules.forEach(async (sched: any) => {
@@ -166,6 +167,26 @@ export default class FireBaseHelper {
     });
 
     return (document?.data() as UserInfo) ?? null;
+  }
+
+  public async getUserIdFromDiscordId(
+    discordId: string
+  ): Promise<string | null> {
+    let querySnapshot = await getDocs(
+      query(
+        collection(this.firestore, this.userDiscordIdCollection),
+        where("discordId", "==", discordId.replace("$", ""))
+      )
+    ).catch((e) => {
+      this.saveError(e, "firebase error");
+    });
+
+    let firebaseId = null;
+    querySnapshot?.forEach((doc: any) => {
+      firebaseId = doc.id;
+    });
+
+    return firebaseId;
   }
 
   public async saveAnime(anime: AnimeItem): Promise<void> {

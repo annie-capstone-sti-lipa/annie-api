@@ -170,6 +170,27 @@ app.get("/recommendations", async (req, res) => {
   );
 });
 
+app.get("/recommendations-discord", async (req, res) => {
+  fireBaseHelper
+    .getUserIdFromDiscordId(req.query.discord_id as string)
+    .then(async (userId) => {
+      res.send(
+        await myAnimeListHelper.getSuggestions(
+          userId ?? "",
+          Number(req.query.offset ?? "0") ?? 0,
+          Number(1)
+        )
+      );
+    });
+  // res.send(
+  //   await myAnimeListHelper.getSuggestions(
+  //     req.query.userId as string,
+  //     Number(req.query.offset ?? "0") ?? 0,
+  //     Number(req.query.limit ?? "0")
+  //   )
+  // );
+});
+
 app.get("/quiz-scores", async (req, res) => {
   fireBaseHelper
     .getQuizScores(req.query.userId!.toString())

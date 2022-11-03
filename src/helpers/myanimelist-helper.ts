@@ -38,12 +38,15 @@ export default class MyAnimeListHelper {
     offset: number,
     limit: number = 30
   ): Promise<Array<AnimeItem>> => {
-    let malToken = await fireBaseHelper.getMalToken(userId);
+    let malToken =
+      userId.length === 0
+        ? undefined
+        : await fireBaseHelper.getMalToken(userId);
+
     let response = await fetch(
       malToken === undefined
         ? `https://api.myanimelist.net/v2/anime/ranking?ranking_type=bypopularity&limit=${limit}&offset=${offset}`
         : `https://api.myanimelist.net/v2/anime/suggestions?limit=${limit}&offset=${offset}`,
-
       {
         method: "GET",
         headers: {
@@ -61,7 +64,7 @@ export default class MyAnimeListHelper {
 
     let recommendations: Array<AnimeItem> = [];
 
-    if (response == undefined) {
+    if (response === undefined || response.data === undefined) {
       return this.getSuggestions("", offset, limit);
     }
 
