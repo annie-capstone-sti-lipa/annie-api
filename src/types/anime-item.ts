@@ -1,4 +1,5 @@
 export default class AnimeItem {
+  malUrl: string;
   id: number;
   name: string;
   thumbnail: string;
@@ -7,10 +8,12 @@ export default class AnimeItem {
   synopsis: string;
   genres: Array<string>;
   trailer?: string;
+  trailerUrl?: string;
   startDate: string;
   endDate: string;
 
   constructor(jikanMoeData: any) {
+    this.malUrl = jikanMoeData.url;
     this.id = jikanMoeData.mal_id;
     this.name = jikanMoeData.title;
     this.thumbnail = jikanMoeData.images.jpg.large_image_url;
@@ -25,6 +28,7 @@ export default class AnimeItem {
     this.endDate = jikanMoeData.aired.to;
 
     this.trailer = jikanMoeData.trailer.embed_url;
+    this.trailerUrl = jikanMoeData.trailer.url;
   }
 
   toObject = () => JSON.parse(JSON.stringify(this));
