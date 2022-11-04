@@ -178,11 +178,13 @@ app.get("/recommendations-discord", async (req, res) => {
         res.send({ error: "no userId" });
       } else {
         res.send(
-          await myAnimeListHelper.getSuggestions(
-            userId ?? "",
-            Number(req.query.offset ?? "0") ?? 0,
-            Number(1)
-          )
+          (
+            await myAnimeListHelper.getSuggestions(
+              userId ?? "",
+              Number(req.query.offset ?? "0") ?? 0,
+              Number(1)
+            )
+          )[0]
         );
       }
     });
