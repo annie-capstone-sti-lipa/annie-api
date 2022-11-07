@@ -181,8 +181,8 @@ app.get("/recommendations-discord", async (req, res) => {
           (
             await myAnimeListHelper.getSuggestions(
               userId ?? "",
-              Number(req.query.offset ?? "0") ?? 0,
-              Number(1)
+              Number((req.query.offset as string).replace("$", "")) ?? 0,
+              1
             )
           )[0]
         );
