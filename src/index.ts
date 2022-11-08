@@ -99,6 +99,49 @@ app.post("/update-anime-status", async (req, res) => {
   }
 });
 
+app.post("/update-anime-status-discord", async (req, res) => {
+  let body = req.body;
+
+  fireBaseHelper
+    .getUserIdFromDiscordId(body.discord_id as string)
+    .then(async (userId) => {
+      if (userId === null) {
+        res.send({
+          error:
+            "Sorry but I don't recognize your discord account, have you linked you discord account in https://client-annie.me ?",
+        });
+      } else {
+        if ((await fireBaseHelper.getMalToken(body.userId)) === undefined) {
+          res.send({
+            error:
+              "You need to grant me permissions to your MyAnimeList account to perform such actions.",
+            link: myAnimeListHelper.getAuthLink(body.userId),
+          });
+        } else {
+          if (req.body.status === AnimeStatus.completed) {
+            res.send(
+              await myAnimeListHelper.completedAnimeStatus(
+                body.animeId,
+                body.status,
+                body.score,
+                body.num_watched_episodes,
+                userId
+              )
+            );
+          } else {
+            res.send(
+              await myAnimeListHelper.updateAnimeStatus(
+                body.animeId,
+                body.status,
+                userId
+              )
+            );
+          }
+        }
+      }
+    });
+});
+
 app.post("/save-user-info", async (req, res) => {
   fireBaseHelper
     .saveUserInfo(new UserInfo(req.body.name, req.body.bio), req.body.userId)
