@@ -33,6 +33,19 @@ export default class MyAnimeListHelper {
     return await fireBaseHelper.getAnime(id);
   };
 
+  searchAnime = async (queryString: string): Promise<AnimeItem | null> => {
+    let url = `https://api.jikan.moe/v4/anime?limit=1&q=${queryString}`;
+    let response = await fetch(url, {
+      method: "GET",
+    }).then((response) => response.json());
+
+    if (response.data.length === 1) {
+      return new AnimeItem(response.data[0]);
+    }
+
+    return null;
+  };
+
   getSuggestions = async (
     userId: string,
     offset: number,

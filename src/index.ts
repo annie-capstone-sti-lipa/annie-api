@@ -68,6 +68,20 @@ app.post("/save-quiz-result", async (req, res) => {
     });
 });
 
+app.get("/search-anime", async (req, res) => {
+  myAnimeListHelper
+    .searchAnime(req.query.queryString as string)
+    .then((result) => {
+      if (result === null) {
+        res.send({
+          error: "no items matched your query.",
+        });
+      } else {
+        res.send({ result: result });
+      }
+    });
+});
+
 app.post("/update-anime-status", async (req, res) => {
   let body = req.body;
   if ((await fireBaseHelper.getMalToken(body.userId)) === undefined) {
