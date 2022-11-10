@@ -175,7 +175,7 @@ export default class FireBaseHelper {
     let querySnapshot = await getDocs(
       query(
         collection(this.firestore, this.userDiscordIdCollection),
-        where("discordId", "==", discordId.replace("$", ""))
+        where("discordId", "==", discordId)
       )
     ).catch((e) => {
       this.saveError(e, "firebase error");

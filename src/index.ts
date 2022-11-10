@@ -125,11 +125,11 @@ app.post("/update-anime-status-discord", async (req, res) => {
             "Sorry but I don't recognize your discord account, have you linked you discord account in https://client-annie.me ?",
         });
       } else {
-        if ((await fireBaseHelper.getMalToken(body.userId)) === undefined) {
+        if ((await fireBaseHelper.getMalToken(userId)) === undefined) {
           res.send({
-            error:
-              "You need to grant me permissions to your MyAnimeList account to perform such actions.",
-            link: myAnimeListHelper.getAuthLink(body.userId),
+            error: `You need to grant me permissions to your MyAnimeList account to perform such actions. Please click here: ${myAnimeListHelper.getAuthLink(
+              body.userId
+            )}`,
           });
         } else {
           if (req.body.status === AnimeStatus.completed) {
@@ -238,7 +238,7 @@ app.get("/recommendations-discord", async (req, res) => {
           (
             await myAnimeListHelper.getSuggestions(
               userId ?? "",
-              Number((req.query.offset as string).replace("$", "")) ?? 0,
+              Number(req.query.offset as string) ?? 0,
               1
             )
           )[0]
