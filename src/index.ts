@@ -71,14 +71,8 @@ app.post("/save-quiz-result", async (req, res) => {
 app.get("/search-anime", async (req, res) => {
   myAnimeListHelper
     .searchAnime(req.query.queryString as string)
-    .then((result) => {
-      if (result === null) {
-        res.send({
-          error: "no items matched your query.",
-        });
-      } else {
-        res.send({ result: result });
-      }
+    .then((results) => {
+      res.send({ results: results });
     });
 });
 
