@@ -1,6 +1,6 @@
 import base64url from "base64url";
 import crypto from "crypto";
-import fetch, { Body } from "node-fetch";
+import fetch from "node-fetch";
 import { fireBaseHelper } from "..";
 import AnimeItem from "../types/anime-item";
 import AnimeStatus from "../types/anime-status";

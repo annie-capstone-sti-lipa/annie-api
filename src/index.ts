@@ -18,6 +18,7 @@ import KanjiReadings from "./types/kanji-readings";
 import QuizResult from "./types/quiz-result";
 import UserInfo from "./types/user-info";
 import AnimeStatus from "./types/anime-status";
+import DiscordHelper from "./helpers/discord-helper";
 
 const app = express();
 const upload = multer();
@@ -50,6 +51,29 @@ app.post("/sauce", upload.single("image"), async (req, res) => {
     response.error = "There were no matches for this image.";
   }
   res.send(response);
+});
+
+app.post("/save-quiz-result-discord", async (req, res) => {
+  let body = req.body;
+  console.log(req.body);
+
+  DiscordHelper.getFirebaseIdFromDiscordId(req.query.discord_id as string)
+    .then(async (userId) => {
+      fireBaseHelper
+        .saveQuizResult(
+          new QuizResult(
+            userId,
+            body.writingSystem,
+            body.type,
+            body.items,
+            body.score
+          )
+        )
+        .then((result) => {
+          res.send(result);
+        });
+    })
+    .catch((e) => res.send(e));
 });
 
 app.post("/save-quiz-result", async (req, res) => {
@@ -110,44 +134,37 @@ app.post("/update-anime-status", async (req, res) => {
 app.post("/update-anime-status-discord", async (req, res) => {
   let body = req.body;
 
-  fireBaseHelper
-    .getUserIdFromDiscordId(body.discord_id as string)
+  DiscordHelper.getFirebaseIdFromDiscordId(body.discord_id)
     .then(async (userId) => {
-      if (userId === null) {
+      if (await DiscordHelper.noMalToken(userId)) {
         res.send({
-          error:
-            "Sorry but I don't recognize your discord account, have you linked you discord account in https://client-annie.me ?",
+          error: `You need to grant me permissions to your MyAnimeList account to perform such actions. Please click here: ${myAnimeListHelper.getAuthLink(
+            userId
+          )}`,
         });
       } else {
-        if ((await fireBaseHelper.getMalToken(userId)) === undefined) {
-          res.send({
-            error: `You need to grant me permissions to your MyAnimeList account to perform such actions. Please click here: ${myAnimeListHelper.getAuthLink(
-              body.userId
-            )}`,
-          });
+        if (req.body.status === AnimeStatus.completed) {
+          res.send(
+            await myAnimeListHelper.completedAnimeStatus(
+              body.animeId,
+              body.status,
+              body.score,
+              body.num_watched_episodes,
+              userId
+            )
+          );
         } else {
-          if (req.body.status === AnimeStatus.completed) {
-            res.send(
-              await myAnimeListHelper.completedAnimeStatus(
-                body.animeId,
-                body.status,
-                body.score,
-                body.num_watched_episodes,
-                userId
-              )
-            );
-          } else {
-            res.send(
-              await myAnimeListHelper.updateAnimeStatus(
-                body.animeId,
-                body.status,
-                userId
-              )
-            );
-          }
+          res.send(
+            await myAnimeListHelper.updateAnimeStatus(
+              body.animeId,
+              body.status,
+              userId
+            )
+          );
         }
       }
-    });
+    })
+    .catch((e) => res.send(e));
 });
 
 app.post("/save-user-info", async (req, res) => {
@@ -190,6 +207,19 @@ app.get("/save-auth-code", (req, res) => {
   res.redirect("https://client-annie.me");
 });
 
+app.get("/kana-quiz-discord", async (req, res) => {
+  DiscordHelper.getFirebaseIdFromDiscordId(req.query.discord_id as string)
+    .then((_) => {
+      res.send(
+        QuizHelper.getKanaQuiz(
+          (req.query.writing as string).toLowerCase() as writingSystem,
+          (req.query.ordering as string).toLowerCase() as kanaOrdering
+        )
+      );
+    })
+    .catch((e) => res.send(e));
+});
+
 app.get("/kana-quiz", async (req, res) => {
   res.send(
     QuizHelper.getKanaQuiz(
@@ -197,6 +227,18 @@ app.get("/kana-quiz", async (req, res) => {
       (req.query.ordering as string).toLowerCase() as kanaOrdering
     )
   );
+});
+
+app.get("/kanji-quiz-discord", async (req, res) => {
+  DiscordHelper.getFirebaseIdFromDiscordId(req.query.discord_id as string)
+    .then((_) => {
+      res.send(
+        QuizHelper.getKanjiQuiz(
+          (req.query.reading as string).toLowerCase() as KanjiReadings
+        )
+      );
+    })
+    .catch((e) => res.send(e));
 });
 
 app.get("/kanji-quiz", async (req, res) => {
@@ -222,23 +264,19 @@ app.get("/recommendations", async (req, res) => {
 });
 
 app.get("/recommendations-discord", async (req, res) => {
-  fireBaseHelper
-    .getUserIdFromDiscordId(req.query.discord_id as string)
+  DiscordHelper.getFirebaseIdFromDiscordId(req.query.discord_id as string)
     .then(async (userId) => {
-      if (userId === null) {
-        res.send({ error: "no userId" });
-      } else {
-        res.send(
-          (
-            await myAnimeListHelper.getSuggestions(
-              userId ?? "",
-              Number(req.query.offset as string) ?? 0,
-              1
-            )
-          )[0]
-        );
-      }
-    });
+      res.send(
+        (
+          await myAnimeListHelper.getSuggestions(
+            userId ?? "",
+            Number(req.query.offset as string) ?? 0,
+            1
+          )
+        )[0]
+      );
+    })
+    .catch((e) => res.send(e));
 });
 
 app.get("/quiz-scores", async (req, res) => {
