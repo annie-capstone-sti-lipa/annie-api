@@ -55,9 +55,8 @@ app.post("/sauce", upload.single("image"), async (req, res) => {
 
 app.post("/save-quiz-result-discord", async (req, res) => {
   let body = req.body;
-  console.log(req.body);
 
-  DiscordHelper.getFirebaseIdFromDiscordId(req.query.discord_id as string)
+  DiscordHelper.getFirebaseIdFromDiscordId(body.discord_id as string)
     .then(async (userId) => {
       fireBaseHelper
         .saveQuizResult(
