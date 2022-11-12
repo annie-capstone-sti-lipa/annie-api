@@ -1,4 +1,5 @@
 import { fireBaseHelper } from "..";
+import AnimeItem from "../types/anime-item";
 
 export default class AnimeSchedulesHelper {
   constructor() {}
@@ -42,7 +43,9 @@ export default class AnimeSchedulesHelper {
         day: days[i],
         schedules: (
           (await getScheduleByDay(days[i]).catch((e) => console.log(e))) as any
-        )["data"],
+        )["data"].map((jikanData: any) => {
+          return new AnimeItem(jikanData).toObject();
+        }),
       });
     }
 

@@ -172,7 +172,6 @@ export default class FireBaseHelper {
   public async getUserIdFromDiscordId(
     discordId: string
   ): Promise<string | null> {
-    console.log(discordId);
     let querySnapshot = await getDocs(
       query(
         collection(this.firestore, this.userDiscordIdCollection),
