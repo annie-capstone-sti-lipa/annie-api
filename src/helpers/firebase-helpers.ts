@@ -11,15 +11,12 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { myAnimeListHelper } from "..";
 import AnimeItem from "../types/anime-item";
-import Kana from "../types/kana";
-import kanaOrdering from "../types/kana-ordering";
 import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
 import UserInfo from "../types/user-info";
+import UserQuizScore from "../types/user-quiz-score";
 import writingSystem from "../types/writing-system";
-import MyAnimeListHelper from "./myanimelist-helper";
 
 export default class FireBaseHelper {
   firestore = getFirestore();
@@ -141,6 +138,72 @@ export default class FireBaseHelper {
       getTotal(hiraganaScores),
       getTotal(katakanaScores)
     );
+  }
+
+  public async getAllQuizScores(): Promise<Array<UserQuizScore>> {
+    function getTotal(data: Array<any>) {
+      let items = 0;
+      let score = 0;
+      data.forEach((element) => {
+        items += element.items;
+        score += element.score;
+      });
+
+      return (score / items) * 100;
+    }
+
+    const querySnapshot = await getDocs(
+      query(collection(this.firestore, this.usersQuizCollection))
+    );
+
+    let userIds: Array<string> = [];
+    let userScores: Array<UserQuizScore> = [];
+
+    querySnapshot.forEach((doc: any) => {
+      userIds.push(doc.data().userId);
+    });
+    userIds = [...new Set(userIds)];
+
+    for (let index in userIds) {
+      await this.getUserInfo(userIds[index]).then((info) => {
+        let hiraganaScores: Array<any> = [];
+        let katakanaScores: Array<any> = [];
+        let kanjiScores: Array<any> = [];
+
+        querySnapshot.forEach((doc: any) => {
+          let data = doc.data();
+
+          switch (data.writingSystem.toLowerCase()) {
+            case writingSystem.hiragana:
+              hiraganaScores.push(data);
+              break;
+            case writingSystem.katakana:
+              katakanaScores.push(data);
+              break;
+            case writingSystem.kanji:
+              kanjiScores.push(data);
+              break;
+          }
+        });
+
+        userScores.push(
+          new UserQuizScore(
+            info!,
+            new QuizScores(
+              getTotal(kanjiScores),
+              getTotal(hiraganaScores),
+              getTotal(katakanaScores)
+            )
+          )
+        );
+
+        hiraganaScores = [];
+        katakanaScores = [];
+        kanjiScores = [];
+      });
+    }
+
+    return userScores;
   }
 
   public async saveUserMalToken(userId: string, response: any) {

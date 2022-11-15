@@ -284,5 +284,8 @@ app.get("/quiz-scores", async (req, res) => {
     .getQuizScores(req.query.userId!.toString())
     .then((scores) => res.send(scores));
 });
+app.get("/all-quiz-scores", (_, res) => {
+  fireBaseHelper.getAllQuizScores().then((scores) => res.send(scores));
+});
 
 app.listen(process.env.PORT);
