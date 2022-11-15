@@ -141,17 +141,6 @@ export default class FireBaseHelper {
   }
 
   public async getAllQuizScores(): Promise<Array<UserQuizScore>> {
-    function getTotal(data: Array<any>) {
-      let items = 0;
-      let score = 0;
-      data.forEach((element) => {
-        items += element.items;
-        score += element.score;
-      });
-
-      return (score / items) * 100;
-    }
-
     const querySnapshot = await getDocs(
       query(collection(this.firestore, this.usersQuizCollection))
     );
@@ -166,40 +155,48 @@ export default class FireBaseHelper {
 
     for (let index in userIds) {
       await this.getUserInfo(userIds[index]).then((info) => {
-        let hiraganaScores: Array<any> = [];
-        let katakanaScores: Array<any> = [];
-        let kanjiScores: Array<any> = [];
+        function _getScores(): QuizScores {
+          function getTotal(data: Array<any>) {
+            let items = 0;
+            let score = 0;
+            data.forEach((element) => {
+              items += element.items;
+              score += element.score;
+            });
 
-        querySnapshot.forEach((doc: any) => {
-          let data = doc.data();
-
-          switch (data.writingSystem.toLowerCase()) {
-            case writingSystem.hiragana:
-              hiraganaScores.push(data);
-              break;
-            case writingSystem.katakana:
-              katakanaScores.push(data);
-              break;
-            case writingSystem.kanji:
-              kanjiScores.push(data);
-              break;
+            return (score / items) * 100;
           }
-        });
 
-        userScores.push(
-          new UserQuizScore(
-            info!,
-            new QuizScores(
-              getTotal(kanjiScores),
-              getTotal(hiraganaScores),
-              getTotal(katakanaScores)
-            )
-          )
-        );
+          let hiraganaScores: Array<any> = [];
+          let katakanaScores: Array<any> = [];
+          let kanjiScores: Array<any> = [];
 
-        hiraganaScores = [];
-        katakanaScores = [];
-        kanjiScores = [];
+          querySnapshot.forEach((doc: any) => {
+            let data = doc.data();
+
+            if (userIds[index] == data.userId) {
+              switch (data.writingSystem.toLowerCase()) {
+                case writingSystem.hiragana:
+                  hiraganaScores.push(data);
+                  break;
+                case writingSystem.katakana:
+                  katakanaScores.push(data);
+                  break;
+                case writingSystem.kanji:
+                  kanjiScores.push(data);
+                  break;
+              }
+            }
+          });
+
+          return new QuizScores(
+            getTotal(kanjiScores),
+            getTotal(hiraganaScores),
+            getTotal(katakanaScores)
+          );
+        }
+
+        userScores.push(new UserQuizScore(info!, _getScores(), userIds[index]));
       });
     }
 

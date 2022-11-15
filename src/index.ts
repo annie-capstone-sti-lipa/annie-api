@@ -288,4 +288,6 @@ app.get("/all-quiz-scores", (_, res) => {
   fireBaseHelper.getAllQuizScores().then((scores) => res.send(scores));
 });
 
+fireBaseHelper.getAllQuizScores();
+
 app.listen(process.env.PORT);
