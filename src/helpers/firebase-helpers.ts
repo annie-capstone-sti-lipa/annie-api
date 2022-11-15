@@ -11,6 +11,7 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
+import { userInfo } from "os";
 import AnimeItem from "../types/anime-item";
 import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
@@ -155,6 +156,10 @@ export default class FireBaseHelper {
 
     for (let index in userIds) {
       await this.getUserInfo(userIds[index]).then((info) => {
+        if (info === null) {
+          info = new UserInfo("name", "bio");
+        }
+
         function _getScores(): QuizScores {
           function getTotal(data: Array<any>) {
             let items = 0;
