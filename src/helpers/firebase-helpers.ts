@@ -5,13 +5,11 @@ import {
   getDoc,
   getDocs,
   getFirestore,
-  limit,
   query,
   setDoc,
   where,
 } from "firebase/firestore";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { userInfo } from "os";
+import { getStorage } from "firebase/storage";
 import AnimeItem from "../types/anime-item";
 import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
