@@ -188,7 +188,7 @@ app.get("/getWeekSchedule", async (req, res) => {
 app.get("/saveWeekSchedule", async (req, res) => {
   res.send(await AnimeSchedulesHelper.saveWeekSchedule());
 });
-AnimeSchedulesHelper.saveWeekSchedule();
+// AnimeSchedulesHelper.saveWeekSchedule();
 
 app.get("/discord-auth", (req, res) => {
   res.send({
