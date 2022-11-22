@@ -10,7 +10,7 @@ export default class AnimeSchedulesHelper {
       page: number = 1
     ): Promise<Object> {
       let response = await fetch(
-        `https://api.jikan.moe/v4/schedules?filter=${day}&sfw=false&page=${
+        `https://api.jikan.moe/v4/schedules?filter=${day}&sfw=true&page=${
           page ?? 1
         }&kids=true`,
         { method: "GET" }
