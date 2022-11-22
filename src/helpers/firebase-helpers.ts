@@ -10,12 +10,14 @@ import {
   where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { userInfo } from "os";
 import AnimeItem from "../types/anime-item";
 import QuizResult from "../types/quiz-result";
 import QuizScores from "../types/quiz-scores";
 import UserInfo from "../types/user-info";
 import UserQuizScore from "../types/user-quiz-score";
 import writingSystem from "../types/writing-system";
+import Helpers from "./helpers";
 
 export default class FireBaseHelper {
   firestore = getFirestore();
@@ -140,6 +142,7 @@ export default class FireBaseHelper {
   }
 
   public async getAllQuizScores(): Promise<Array<UserQuizScore>> {
+    //TODO: improve the algo for this, add the calibration for scores
     const querySnapshot = await getDocs(
       query(collection(this.firestore, this.usersQuizCollection))
     );
@@ -155,10 +158,10 @@ export default class FireBaseHelper {
     for (let index in userIds) {
       await this.getUserInfo(userIds[index]).then((info) => {
         if (info === null) {
-          info = new UserInfo("name", "bio");
+          info = new UserInfo("anonymous", "bio");
         }
 
-        function _getScores(): QuizScores {
+        function _getScores(): QuizScores | null {
           function getTotal(data: Array<any>) {
             let items = 0;
             let score = 0;
@@ -170,6 +173,8 @@ export default class FireBaseHelper {
             return (score / items) * 100;
           }
 
+          let quizCount = 0;
+
           let hiraganaScores: Array<any> = [];
           let katakanaScores: Array<any> = [];
           let kanjiScores: Array<any> = [];
@@ -178,6 +183,7 @@ export default class FireBaseHelper {
             let data = doc.data();
 
             if (userIds[index] == data.userId) {
+              quizCount++;
               switch (data.writingSystem.toLowerCase()) {
                 case writingSystem.hiragana:
                   hiraganaScores.push(data);
@@ -192,14 +198,22 @@ export default class FireBaseHelper {
             }
           });
 
-          return new QuizScores(
-            getTotal(kanjiScores),
-            getTotal(hiraganaScores),
-            getTotal(katakanaScores)
-          );
+          if (quizCount >= 10) {
+            return new QuizScores(
+              getTotal(kanjiScores),
+              getTotal(hiraganaScores),
+              getTotal(katakanaScores)
+            );
+          } else {
+            return null;
+          }
         }
 
-        userScores.push(new UserQuizScore(info!, _getScores(), userIds[index]));
+        let scores = _getScores();
+        if (scores !== null) {
+          userScores.push(new UserQuizScore(info!, scores, userIds[index]));
+        } else {
+        }
       });
     }
 

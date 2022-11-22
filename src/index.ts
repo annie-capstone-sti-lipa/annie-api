@@ -19,6 +19,7 @@ import QuizResult from "./types/quiz-result";
 import UserInfo from "./types/user-info";
 import AnimeStatus from "./types/anime-status";
 import DiscordHelper from "./helpers/discord-helper";
+import Helpers from "./helpers/helpers";
 
 const app = express();
 const upload = multer();
@@ -287,7 +288,5 @@ app.get("/quiz-scores", async (req, res) => {
 app.get("/all-quiz-scores", (_, res) => {
   fireBaseHelper.getAllQuizScores().then((scores) => res.send(scores));
 });
-
-fireBaseHelper.getAllQuizScores();
 
 app.listen(process.env.PORT);
