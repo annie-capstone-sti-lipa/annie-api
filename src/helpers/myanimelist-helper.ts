@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import { fireBaseHelper } from "..";
 import AnimeItem from "../types/anime-item";
 import AnimeStatus from "../types/anime-status";
+import Helpers from "./helpers";
 
 export default class MyAnimeListHelper {
   clientId: string;
@@ -58,9 +59,13 @@ export default class MyAnimeListHelper {
         ? undefined
         : await fireBaseHelper.getMalToken(userId);
 
+    let rankingTypes = ["bypopularity", "all", "favorite", "airing"];
+
     let response = await fetch(
       malToken === undefined
-        ? `https://api.myanimelist.net/v2/anime/ranking?ranking_type=bypopularity&limit=${limit}&offset=${offset}`
+        ? `https://api.myanimelist.net/v2/anime/ranking?ranking_type=${
+            rankingTypes[Helpers.randomNumber(0, 3)]
+          }&limit=${limit}&offset=${offset}`
         : `https://api.myanimelist.net/v2/anime/suggestions?limit=${limit}&offset=${offset}`,
       {
         method: "GET",
