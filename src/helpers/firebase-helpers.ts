@@ -272,4 +272,19 @@ export default class FireBaseHelper {
       anime.toObject()
     );
   }
+
+  public async saveUserDiscordId(
+    discordId: string,
+    userId: string
+  ): Promise<any> {
+    return await setDoc(
+      doc(this.firestore, this.userDiscordIdCollection, userId),
+      { discordId: discordId }
+    )
+      .then(() => ({
+        success: true,
+        message: "Discord Id saved!",
+      }))
+      .catch((e) => ({ success: false, message: e.toString() }));
+  }
 }

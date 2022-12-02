@@ -92,6 +92,14 @@ app.post("/save-quiz-result", async (req, res) => {
     });
 });
 
+app.post("/save-user-discordId", async (req, res) => {
+  fireBaseHelper
+    .saveUserDiscordId(req.body.discordId, req.body.userId)
+    .then((result) => {
+      res.send(result);
+    });
+});
+
 app.get("/search-anime", async (req, res) => {
   myAnimeListHelper
     .searchAnime(req.query.queryString as string)
