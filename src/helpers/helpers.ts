@@ -10,7 +10,6 @@ class Helpers {
   }
 
   static ids = [
-    "fgvMJ0NcQTd38fZbewljr8HPcVh1",
     "h4RWWHACwlSF68KJHk8LIi8ZsJG2",
     "dm9w6tForVTbfUo0HL25QbbNjRl2",
     "F8lyQstjJ4PgvgQEpl7bpE8W1zk2",
@@ -29,15 +28,15 @@ class Helpers {
   //   Helpers.saveFakeQuiz(id, writingSystem.kanji);
   // });
 
-  // Helpers.saveFakeQuiz("fgvMJ0NcQTd38fZbewljr8HPcVh1", writingSystem.hiragana);
-  // Helpers.saveFakeQuiz("fgvMJ0NcQTd38fZbewljr8HPcVh1", writingSystem.katakana);
-  // Helpers.saveFakeQuiz("fgvMJ0NcQTd38fZbewljr8HPcVh1", writingSystem.kanji);
+  // Helpers.saveFakeQuiz("Hl6revr25Fg2P2vM3hNZdM17u1Y2", writingSystem.hiragana);
+  // Helpers.saveFakeQuiz("Hl6revr25Fg2P2vM3hNZdM17u1Y2", writingSystem.katakana);
+  // Helpers.saveFakeQuiz("Hl6revr25Fg2P2vM3hNZdM17u1Y2", writingSystem.kanji);
 
   public static saveFakeQuiz(
     userId: string,
     selectedWritingSystem: writingSystem
   ) {
-    let minScore = 10;
+    let minScore = 5;
     let maxScore = 10;
 
     for (let i = 0; i < 10; i++) {
@@ -58,7 +57,10 @@ class Helpers {
               Helpers.randomNumber(minScore, maxScore)
             )
           )
-          .then((value) => console.log(value));
+          .then((value) => {
+            console.log(value);
+            console.log(userId);
+          });
       } else {
         fireBaseHelper
           .saveQuizResult(
@@ -74,7 +76,10 @@ class Helpers {
               Helpers.randomNumber(minScore, maxScore)
             )
           )
-          .then((value) => console.log(value));
+          .then((value) => {
+            console.log(value);
+            console.log(userId);
+          });
       }
     }
   }
