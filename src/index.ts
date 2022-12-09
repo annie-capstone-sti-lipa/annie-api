@@ -100,6 +100,18 @@ app.post("/save-user-discordId", async (req, res) => {
     });
 });
 
+app.post("/save-sudoer", async (req, res) => {
+  fireBaseHelper.addSudoer(req.body.discordId).then((result) => {
+    res.send(result);
+  });
+});
+
+app.get("/get-sudoers", async (req, res) => {
+  fireBaseHelper.getSudoers().then((result) => {
+    res.send(result);
+  });
+});
+
 app.get("/search-anime", async (req, res) => {
   myAnimeListHelper
     .searchAnime(req.query.queryString as string)
@@ -293,6 +305,7 @@ app.get("/quiz-scores", async (req, res) => {
     .getQuizScores(req.query.userId!.toString())
     .then((scores) => res.send(scores));
 });
+
 app.get("/all-quiz-scores", (_, res) => {
   fireBaseHelper.getAllQuizScores().then((scores) => res.send(scores));
 });

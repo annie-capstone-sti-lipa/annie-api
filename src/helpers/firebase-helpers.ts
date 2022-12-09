@@ -17,7 +17,6 @@ import QuizScores from "../types/quiz-scores";
 import UserInfo from "../types/user-info";
 import UserQuizScore from "../types/user-quiz-score";
 import writingSystem from "../types/writing-system";
-import Helpers from "./helpers";
 
 export default class FireBaseHelper {
   firestore = getFirestore();
@@ -29,6 +28,7 @@ export default class FireBaseHelper {
   usersQuizCollection = "users-quiz";
   animesCollections = "animes";
   userDiscordIdCollection = "users-discord";
+  sudoers = "sudoers";
 
   public async saveSchedules(schedules: Object[]) {
     schedules.forEach(async (sched: any) => {
@@ -41,6 +41,28 @@ export default class FireBaseHelper {
 
   public async saveError(error: any, key: string) {
     await setDoc(doc(this.firestore, "errors", key), { error: error });
+  }
+
+  public async addSudoer(discordId: string) {
+    await setDoc(doc(this.firestore, this.sudoers, discordId), {
+      discordId: discordId,
+    });
+  }
+
+  public async getSudoers(): Promise<Array<string>> {
+    const querySnapshot = await getDocs(
+      collection(this.firestore, this.sudoers)
+    );
+
+    let sudoersList: Array<string> = [];
+
+    querySnapshot.forEach((doc: any) => {
+      sudoersList.push(doc.id);
+    });
+
+    console.log(sudoersList);
+
+    return sudoersList;
   }
 
   public async getAnime(id: string): Promise<AnimeItem | null> {
