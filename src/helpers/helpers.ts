@@ -14,8 +14,6 @@ class Helpers {
     "dm9w6tForVTbfUo0HL25QbbNjRl2",
     "F8lyQstjJ4PgvgQEpl7bpE8W1zk2",
     "ZH7DMbH7yQeWgMEDSBRUiNkvBby2",
-    "LljhOPXQUrPo4zMcJgOw2pCe0If2",
-    "4ognrm5lKbdmX2DNOLN7OZv6Ytf2",
     "rVPSPMToDqT9qAs74l0iD6lODzo1",
     "I53oyPHGPiVQVD2STOLagz2CUtt2",
     "HAoYfMfroPgij0i3UAwUccQE9923",
@@ -39,7 +37,7 @@ class Helpers {
     let minScore = 5;
     let maxScore = 10;
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 1; i++) {
       let randomize = Helpers.randomNumber(1, 3);
 
       if (selectedWritingSystem === writingSystem.kanji) {
