@@ -1,6 +1,7 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -28,7 +29,7 @@ export default class FireBaseHelper {
   usersQuizCollection = "users-quiz";
   animesCollections = "animes";
   userDiscordIdCollection = "users-discord";
-  sudoers = "sudoers";
+  admins = "admins";
 
   public async saveSchedules(schedules: Object[]) {
     schedules.forEach(async (sched: any) => {
@@ -43,17 +44,23 @@ export default class FireBaseHelper {
     await setDoc(doc(this.firestore, "errors", key), { error: error });
   }
 
-  public async addSudoer(discordId: string) {
-    return await setDoc(doc(this.firestore, this.sudoers, discordId), {
+  public async addAdmin(discordId: string) {
+    return await setDoc(doc(this.firestore, this.admins, discordId), {
       discordId: discordId,
     })
       .then(() => true)
       .catch((e) => false);
   }
 
-  public async getSudoers(): Promise<Array<string>> {
+  public async deleteAdmin(discordId: string) {
+    return await deleteDoc(doc(this.firestore, this.admins, discordId))
+      .then(() => true)
+      .catch((e) => false);
+  }
+
+  public async getAdmins(): Promise<Array<string>> {
     const querySnapshot = await getDocs(
-      collection(this.firestore, this.sudoers)
+      collection(this.firestore, this.admins)
     );
 
     let sudoersList: Array<string> = [];

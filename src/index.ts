@@ -100,14 +100,20 @@ app.post("/save-user-discordId", async (req, res) => {
     });
 });
 
-app.post("/add-sudoer", async (req, res) => {
-  fireBaseHelper.addSudoer(req.body.discordId).then((success) => {
+app.post("/add-admin", async (req, res) => {
+  fireBaseHelper.addAdmin(req.body.discordId).then((success) => {
     res.send({ success: success });
   });
 });
 
-app.get("/get-sudoers", async (req, res) => {
-  fireBaseHelper.getSudoers().then((result) => {
+app.get("/get-admins", async (req, res) => {
+  fireBaseHelper.getAdmins().then((result) => {
+    res.send(result);
+  });
+});
+
+app.delete("/delete-admin", async (req, res) => {
+  fireBaseHelper.deleteAdmin(req.body.discordId).then((result) => {
     res.send(result);
   });
 });
