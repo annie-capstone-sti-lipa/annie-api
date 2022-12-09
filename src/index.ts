@@ -100,9 +100,9 @@ app.post("/save-user-discordId", async (req, res) => {
     });
 });
 
-app.post("/save-sudoer", async (req, res) => {
-  fireBaseHelper.addSudoer(req.body.discordId).then((result) => {
-    res.send(result);
+app.post("/add-sudoer", async (req, res) => {
+  fireBaseHelper.addSudoer(req.body.discordId).then((success) => {
+    res.send({ success: success });
   });
 });
 

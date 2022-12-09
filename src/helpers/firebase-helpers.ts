@@ -44,9 +44,11 @@ export default class FireBaseHelper {
   }
 
   public async addSudoer(discordId: string) {
-    await setDoc(doc(this.firestore, this.sudoers, discordId), {
+    return await setDoc(doc(this.firestore, this.sudoers, discordId), {
       discordId: discordId,
-    });
+    })
+      .then(() => true)
+      .catch((e) => false);
   }
 
   public async getSudoers(): Promise<Array<string>> {
@@ -59,8 +61,6 @@ export default class FireBaseHelper {
     querySnapshot.forEach((doc: any) => {
       sudoersList.push(doc.id);
     });
-
-    console.log(sudoersList);
 
     return sudoersList;
   }
