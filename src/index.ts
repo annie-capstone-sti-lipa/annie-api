@@ -231,7 +231,7 @@ app.get("/mal-auth", (req, res) => {
 
 app.get("/save-auth-code", (req, res) => {
   myAnimeListHelper.generateMalToken(req.query);
-  res.redirect("https://client-annie.me");
+  res.redirect("https://jlalunio.codes/files/mal_success.html");
 });
 
 app.get("/kana-quiz-discord", async (req, res) => {
