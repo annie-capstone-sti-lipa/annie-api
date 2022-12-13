@@ -35,7 +35,7 @@ export default class MyAnimeListHelper {
   };
 
   searchAnime = async (queryString: string): Promise<Array<AnimeItem>> => {
-    let url = `https://api.jikan.moe/v4/anime?limit=10&q=${queryString}&sfw=true`;
+    let url = `https://api.jikan.moe/v4/anime?limit=30&q=${queryString}&sfw=true`;
     let response = await fetch(url, {
       method: "GET",
     }).then((response) => response.json());
