@@ -29,7 +29,7 @@ export default class SauceNaoHelper {
     formData.append("output_type", "2");
     formData.append("numres", "1");
     formData.append("minsim", "80");
-    formData.append("hide", "1");
+    formData.append("hide", "2");
     formData.append("api_key", this.apiKey);
 
     let response = await fetch(this.url, {
