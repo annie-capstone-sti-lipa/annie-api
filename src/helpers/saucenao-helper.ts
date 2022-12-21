@@ -42,7 +42,9 @@ export default class SauceNaoHelper {
     let results: Array<Sauce> = [];
 
     response?.results?.forEach((result: any) => {
-      results.push(new Sauce(result));
+      if (result.header.similarity > 45) {
+        results.push(new Sauce(result));
+      }
     });
 
     return results;
